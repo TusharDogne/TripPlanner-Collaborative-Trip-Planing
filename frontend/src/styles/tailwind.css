@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Primary Colors */
+    --color-primary: #FF6B6B; /* coral */
+    --color-primary-foreground: #FFFFFF; /* white */
+    
+    /* Secondary Colors */
+    --color-secondary: #4ECDC4; /* ocean-blue */
+    --color-secondary-foreground: #FFFFFF; /* white */
+    
+    /* Accent Colors */
+    --color-accent: #FFE66D; /* sunset-orange */
+    --color-accent-foreground: #2D3748; /* charcoal-gray */
+    
+    /* Background Colors */
+    --color-background: #FEFEFE; /* clean-white */
+    --color-foreground: #2D3748; /* charcoal-gray */
+    
+    /* Surface Colors */
+    --color-card: #F8F9FA; /* light-gray */
+    --color-card-foreground: #2D3748; /* charcoal-gray */
+    --color-popover: #FFFFFF; /* white */
+    --color-popover-foreground: #2D3748; /* charcoal-gray */
+    
+    /* Muted Colors */
+    --color-muted: #F8F9FA; /* light-gray */
+    --color-muted-foreground: #718096; /* medium-gray */
+    
+    /* Border & Input */
+    --color-border: rgba(0, 0, 0, 0.1); /* transparent-black */
+    --color-input: #FFFFFF; /* white */
+    --color-ring: #FF6B6B; /* coral */
+    
+    /* Status Colors */
+    --color-success: #48BB78; /* green-400 */
+    --color-success-foreground: #FFFFFF; /* white */
+    --color-warning: #ED8936; /* orange-400 */
+    --color-warning-foreground: #FFFFFF; /* white */
+    --color-error: #F56565; /* red-400 */
+    --color-error-foreground: #FFFFFF; /* white */
+    --color-destructive: #F56565; /* red-400 */
+    --color-destructive-foreground: #FFFFFF; /* white */
+  }
+
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  body, p, span, div {
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .font-accent {
+    font-family: 'Caveat', cursive;
+  }
+}
+
+@layer components {
+  .collaborative-cursor {
+    @apply absolute pointer-events-none z-50 transition-all duration-300 ease-out;
+    transform: scale(0);
+    animation: cursorAppear 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  }
+  
+  @keyframes cursorAppear {
+    to {
+      transform: scale(1);
+    }
+  }
+  
+  .celebration-particles::before,
+  .celebration-particles::after {
+    content: '';
+    @apply absolute pointer-events-none;
+    width: 6px;
+    height: 6px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    animation: particleBurst 2s ease-out forwards;
+  }
+  
+  .celebration-particles::after {
+    background: var(--color-accent);
+    animation-delay: 0.1s;
+  }
+  
+  @keyframes particleBurst {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--particle-x, 20px), var(--particle-y, -20px)) scale(0);
+    }
+  }
+  
+  .breathing-budget {
+    animation: breathe 3s ease-in-out infinite;
+  }
+  
+  @keyframes breathe {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02);
+    }
+  }
+  
+  .gradient-fill {
+    background: linear-gradient(90deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+  }
+  
+  .constellation-line {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    transition: stroke-dashoffset 0.5s ease-out;
+  }
+  
+  .constellation-line:hover {
+    stroke-dashoffset: 0;
+  }
+  
+  .parallax-slow {
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+  }
+  
+  .voting-progress {
+    background: conic-gradient(from 0deg, var(--color-secondary) 0deg, var(--color-secondary) var(--progress-angle, 0deg), transparent var(--progress-angle, 0deg));
+  }
+  
+  .vote-bounce {
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  .vote-bounce:active {
+    transform: translateY(-2px);
+  }
+  
+  .achievement-flip {
+    animation: flipReveal 0.6s ease-out forwards;
+  }
+  
+  @keyframes flipReveal {
+    0% {
+      transform: rotateY(180deg);
+      opacity: 0;
+    }
+    100% {
+      transform: rotateY(0deg);
+      opacity: 1;
+    }
+  }
+  
+  .magnetic-pull {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+  
+  .magnetic-pull:hover {
+    transform: translate(var(--pull-x, 0), var(--pull-y, 0));
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .slide-in-right {
+    animation: slideInRight 0.4s ease-out forwards;
+  }
+  
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .pulse-orange {
+    animation: pulseOrange 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulseOrange {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(255, 230, 109, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba(255, 230, 109, 0);
+    }
+  }
+  
+  .emoji-bounce {
+    animation: emojiBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  }
+  
+  @keyframes emojiBounce {
+    0% {
+      transform: scale(0);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .shadow-soft {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  .shadow-collaborative {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .border-subtle {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .transition-organic {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .filter-warm {
+    filter: saturate(1.1) sepia(0.05);
+  }
+}
