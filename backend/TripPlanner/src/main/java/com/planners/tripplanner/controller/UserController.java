@@ -1,12 +1,33 @@
 package com.planners.tripplanner.controller;
 
 import com.planners.tripplanner.model.Users;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.planners.tripplanner.service.UserGeneralServices;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("user")
 public class UserController {
 
-    public Users user;
+    @Autowired
+    UserGeneralServices userGeneralServices;
+
+    @PostMapping("register")
+    public ResponseEntity<?> createUser(@RequestBody Users user) {
+        Users createdUser = userGeneralServices.saveUser(user);
+        if(createdUser != null) {
+            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+
+
+    @DeleteMapping("deleteAccount")
+    public ResponseEntity<?> deleteUser() {
+        userGeneralServices.deleteUser();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
