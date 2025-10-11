@@ -8,13 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
     UserGeneralServices userGeneralServices;
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody Users user) {
         Users createdUser = userGeneralServices.saveUser(user);
         if(createdUser != null) {

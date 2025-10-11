@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @RestController
 public class HealthCheckController {
 
-    @GetMapping("/health")
+    @GetMapping("/health-check")
     public String healthCheck() {
         return "Backend is running! Time: " + LocalDateTime.now();
     }
