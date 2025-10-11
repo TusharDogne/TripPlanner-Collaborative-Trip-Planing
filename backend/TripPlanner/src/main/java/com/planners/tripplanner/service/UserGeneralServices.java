@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 public class UserGeneralServices {
 
     public Users saveUser(Users user) {
+        System.out.println("Saving user: " + user);
         return user;
     }
 
