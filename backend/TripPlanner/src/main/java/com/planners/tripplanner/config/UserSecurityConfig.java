@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,6 +27,7 @@ public class UserSecurityConfig {
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST,"/user/register").permitAll()
+                        .requestMatchers("/user/login").permitAll()
                         .requestMatchers("/health-check").permitAll()
                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
@@ -45,5 +48,14 @@ public class UserSecurityConfig {
         authProvider.setUserDetailsService(userDetailsService);
 
         return authProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticateManager(AuthenticationConfiguration configure) {
+        try {
+            return configure.getAuthenticationManager();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

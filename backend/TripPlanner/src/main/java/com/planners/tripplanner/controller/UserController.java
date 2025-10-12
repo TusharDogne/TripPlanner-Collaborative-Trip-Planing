@@ -23,7 +23,14 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody Users user) {
+        String token = userGeneralServices.verifyUser(user);
+        if(token != null) {
+            return new ResponseEntity<>(token, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
 
     @DeleteMapping("deleteAccount")
     public ResponseEntity<?> deleteUser() {
