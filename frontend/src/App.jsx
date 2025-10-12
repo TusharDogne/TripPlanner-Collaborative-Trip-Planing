@@ -10,6 +10,7 @@ import CommunityGallery from "./pages/community-gallery/index";
 import NotFound from "./pages/NotFound";
 import Header from "./components/ui/Header";
 import ScrollToTop from "./components/ScrollToTop";
+import Discover from "./pages/smart-recommendations/index"; // ✅ Added this import
 
 export default function App() {
   return (
@@ -34,16 +35,16 @@ export default function App() {
           element={
             <>
               <Header />
-              <dashboard />
+              <Dashboard /> {/* ✅ Fixed uppercase */}
             </>
           }
-            />
-            <Route
-            path="/smart-recommendations"
-            element={
+        />
+        <Route
+          path="/smart-recommendations"
+          element={
             <>
               <Header />
-              <Discover />
+              <Discover /> {/* ✅ Now properly imported */}
             </>
           }
         />
