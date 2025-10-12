@@ -1,11 +1,14 @@
 package com.planners.tripplanner.controller;
 
+import com.planners.tripplanner.model.MyTrips;
 import com.planners.tripplanner.model.Users;
 import com.planners.tripplanner.service.UserGeneralServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -30,6 +33,15 @@ public class UserController {
             return new ResponseEntity<>(token, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @GetMapping("/myTrips")
+    public ResponseEntity<?> getMyTrips(){
+        List<MyTrips> myTrips= userGeneralServices.getMyTrips();
+        if(myTrips == null || myTrips.isEmpty()) {
+            return new ResponseEntity<>("No Trips found", HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(myTrips, HttpStatus.OK);
     }
 
     @DeleteMapping("deleteAccount")

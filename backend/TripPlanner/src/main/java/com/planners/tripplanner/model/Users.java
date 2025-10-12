@@ -26,5 +26,5 @@ public class Users {
     private String email;
 
     @DBRef
-    private List<MyTrips> roles = new ArrayList<>();
+    private List<MyTrips> myTrips = new ArrayList<>();
 }
