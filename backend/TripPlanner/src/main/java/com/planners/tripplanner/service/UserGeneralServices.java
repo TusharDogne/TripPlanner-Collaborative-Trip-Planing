@@ -1,6 +1,7 @@
 package com.planners.tripplanner.service;
 
 import com.planners.tripplanner.config.JwtService;
+import com.planners.tripplanner.dto.RegisterRequest;
 import com.planners.tripplanner.model.MyTrips;
 import com.planners.tripplanner.model.Users;
 import com.planners.tripplanner.repository.UserRepo;
@@ -29,8 +30,12 @@ public class UserGeneralServices {
 
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-    public Users saveUser(Users user) {
-        user.setPassword(encoder.encode(user.getPassword()));
+    public Users saveUser(RegisterRequest registerRequest) {
+        registerRequest.setPassword(encoder.encode(registerRequest.getPassword()));
+        Users user = new Users();
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(encoder.encode(registerRequest.getPassword()));
+        user.setUserName(registerRequest.getUserName());
         return userRepo.save(user);
     }
 

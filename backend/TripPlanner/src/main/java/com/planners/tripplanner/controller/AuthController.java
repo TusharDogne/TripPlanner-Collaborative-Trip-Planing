@@ -1,5 +1,6 @@
 package com.planners.tripplanner.controller;
 
+import com.planners.tripplanner.dto.RegisterRequest;
 import com.planners.tripplanner.model.MyTrips;
 import com.planners.tripplanner.model.Users;
 import com.planners.tripplanner.service.UserGeneralServices;
@@ -11,17 +12,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "*")
+public class AuthController {
 
     @Autowired
     UserGeneralServices userGeneralServices;
 
     @PostMapping("/register")
-    public ResponseEntity<?> createUser(@RequestBody Users user) {
-        Users createdUser = userGeneralServices.saveUser(user);
+    public ResponseEntity<?> createUser(@RequestBody RegisterRequest registerRequest) {
+        System.out.println("Received: " + registerRequest.getUserName() + ", " + registerRequest.getEmail());
+        Users createdUser = userGeneralServices.saveUser(registerRequest);
         if(createdUser != null) {
-            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+            return new ResponseEntity<>("User created successfully",HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

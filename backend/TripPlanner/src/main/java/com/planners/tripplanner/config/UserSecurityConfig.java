@@ -29,8 +29,9 @@ public class UserSecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .csrf(customizer -> customizer.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.POST,"/user/register").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/auth/register").permitAll()
                         .requestMatchers("/user/login").permitAll()
                         .requestMatchers("/health-check").permitAll()
                 .anyRequest().authenticated())
