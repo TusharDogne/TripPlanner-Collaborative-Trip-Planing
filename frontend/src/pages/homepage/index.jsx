@@ -78,5 +78,22 @@ const Homepage = () => {
     </motion.div>
   );
 };
+// Example: fetch local JSON
+async function fetchPlaces(query) {
+  const res = await fetch('/places.json');
+  const all = await res.json();
+  if (!query) return all;
+  const q = query.toLowerCase();
+  return all.filter(p => 
+    p.name.toLowerCase().includes(q) ||
+    p.city.toLowerCase().includes(q) ||
+    p.state.toLowerCase().includes(q) ||
+    (p.tags || []).join(' ').toLowerCase().includes(q)
+  );
+}
+
 
 export default Homepage;
+
+
+
