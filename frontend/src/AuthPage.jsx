@@ -2,19 +2,65 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { FaPlaneDeparture, FaUser, FaEnvelope, FaLock } from "react-icons/fa";
+import axios from "axios";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+  });
+
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    navigate("/homepage"); // redirects to main Trip Planner page
+  // ✅ handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSignUp = (e) => {
+  // ✅ LOGIN handler
+  const handleLogin = async (e) => {
     e.preventDefault();
-    navigate("/homepage");
+    try {
+      const response = await axios.post("http://localhost:8080/api/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
+      alert(response.data);
+      navigate("/homepage");
+    } catch (error) {
+      alert("Login failed: " + (error.response?.data || "Server error"));
+      console.error(error);
+    }
+  };
+
+  // ✅ SIGNUP handler
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+      "http://localhost:8080/api/auth/register",
+      {
+        userName: formData.fullName,
+        email: formData.email,
+        password: formData.password
+      },
+      {
+        headers: {
+          "Content-Type": "application/json" // explicitly JSON specify kar diya
+        }
+      }
+    );
+
+    
+
+      alert(response.data);
+      navigate("/homepage");
+    } catch (error) {
+      alert("Signup failed: " + (error.response?.data || "Server error"));
+      console.error(error);
+    }
   };
 
   return (
@@ -36,6 +82,7 @@ export default function AuthPage() {
       >
         <AnimatePresence mode="wait">
           {isLogin ? (
+            // 🟦 LOGIN FORM
             <motion.div
               key="login"
               initial={{ opacity: 0, x: 80 }}
@@ -51,7 +98,10 @@ export default function AuthPage() {
                   <FaEnvelope className="text-gray-500 mr-2" />
                   <input
                     type="email"
+                    name="email"
                     placeholder="Email"
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full p-3 focus:outline-none"
                   />
                 </div>
@@ -59,7 +109,10 @@ export default function AuthPage() {
                   <FaLock className="text-gray-500 mr-2" />
                   <input
                     type="password"
+                    name="password"
                     placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
                     className="w-full p-3 focus:outline-none"
                   />
                 </div>
@@ -81,6 +134,7 @@ export default function AuthPage() {
               </p>
             </motion.div>
           ) : (
+            // 🟣 SIGNUP FORM
             <motion.div
               key="signup"
               initial={{ opacity: 0, x: -80 }}
@@ -96,7 +150,10 @@ export default function AuthPage() {
                   <FaUser className="text-gray-500 mr-2" />
                   <input
                     type="text"
+                    name="fullName"
                     placeholder="Full Name"
+                    value={formData.fullName}
+                    onChange={handleChange}
                     className="w-full p-3 focus:outline-none"
                   />
                 </div>
@@ -104,7 +161,10 @@ export default function AuthPage() {
                   <FaEnvelope className="text-gray-500 mr-2" />
                   <input
                     type="email"
+                    name="email"
                     placeholder="Email"
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full p-3 focus:outline-none"
                   />
                 </div>
@@ -112,7 +172,10 @@ export default function AuthPage() {
                   <FaLock className="text-gray-500 mr-2" />
                   <input
                     type="password"
+                    name="password"
                     placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
                     className="w-full p-3 focus:outline-none"
                   />
                 </div>
