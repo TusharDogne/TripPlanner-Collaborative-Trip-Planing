@@ -1,8 +1,7 @@
-package com.planners.tripplanner.service;
+package com.planners.tripplanner.config;
 
-import com.planners.tripplanner.model.UserPrinciple;
-import com.planners.tripplanner.model.Users;
-import com.planners.tripplanner.repository.UserRepo;
+import com.planners.tripplanner.user.model.Users;
+import com.planners.tripplanner.user.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

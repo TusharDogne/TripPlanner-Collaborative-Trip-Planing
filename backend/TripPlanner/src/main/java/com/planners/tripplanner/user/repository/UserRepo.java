@@ -1,11 +1,8 @@
-package com.planners.tripplanner.repository;
+package com.planners.tripplanner.user.repository;
 
-import com.planners.tripplanner.model.MyTrips;
-import com.planners.tripplanner.model.Users;
+import com.planners.tripplanner.user.model.Users;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
-
-import java.util.List;
 
 public interface UserRepo extends MongoRepository<Users, ObjectId> {
     Users findByUserName(String userName);

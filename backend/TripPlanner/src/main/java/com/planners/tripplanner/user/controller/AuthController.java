@@ -1,9 +1,9 @@
-package com.planners.tripplanner.controller;
+package com.planners.tripplanner.user.controller;
 
-import com.planners.tripplanner.dto.RegisterRequest;
-import com.planners.tripplanner.model.MyTrips;
-import com.planners.tripplanner.model.Users;
-import com.planners.tripplanner.service.UserGeneralServices;
+import com.planners.tripplanner.user.dto.RegisterRequest;
+import com.planners.tripplanner.user.model.MyTrips;
+import com.planners.tripplanner.user.model.Users;
+import com.planners.tripplanner.user.service.UserGeneralServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

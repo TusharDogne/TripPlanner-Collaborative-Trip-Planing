@@ -1,4 +1,4 @@
-package com.planners.tripplanner.controller;
+package com.planners.tripplanner.user.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

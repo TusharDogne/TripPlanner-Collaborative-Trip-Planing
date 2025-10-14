@@ -1,10 +1,10 @@
-package com.planners.tripplanner.service;
+package com.planners.tripplanner.user.service;
 
 import com.planners.tripplanner.config.JwtService;
-import com.planners.tripplanner.dto.RegisterRequest;
-import com.planners.tripplanner.model.MyTrips;
-import com.planners.tripplanner.model.Users;
-import com.planners.tripplanner.repository.UserRepo;
+import com.planners.tripplanner.user.dto.RegisterRequest;
+import com.planners.tripplanner.user.model.MyTrips;
+import com.planners.tripplanner.user.model.Users;
+import com.planners.tripplanner.user.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.naming.AuthenticationException;
 import java.util.List;
 
 @Service

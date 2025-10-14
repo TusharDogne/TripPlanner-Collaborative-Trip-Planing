@@ -1,4 +1,4 @@
-package com.planners.tripplanner.model;
+package com.planners.tripplanner.user.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,5 +1,6 @@
-package com.planners.tripplanner.model;
+package com.planners.tripplanner.config;
 
+import com.planners.tripplanner.user.model.Users;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

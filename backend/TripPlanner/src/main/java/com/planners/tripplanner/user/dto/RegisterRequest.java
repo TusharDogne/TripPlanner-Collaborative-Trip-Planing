@@ -1,4 +1,4 @@
-package com.planners.tripplanner.dto;
+package com.planners.tripplanner.user.dto;
 
 
 import lombok.Data;
