@@ -22,72 +22,34 @@ const TripDashboard = () => {
 
   // Mock data initialization
   useEffect(() => {
-    // Mock active trips
-    const mockTrips = [
-      {
-        id: 'trip-1',
-        destination: 'Tokyo Adventure',
-        location: 'Tokyo, Japan',
-        dates: 'Dec 15-22, 2024',
-        memberCount: 4,
-        status: 'active',
-        isNew: false,
-        liveActivity: true,
-        image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&h=200&fit=crop',
-        members: [
-          { id: 1, name: 'Sarah Chen', avatar: 'https://randomuser.me/api/portraits/women/1.jpg', isOnline: true },
-          { id: 2, name: 'Mike Rodriguez', avatar: 'https://randomuser.me/api/portraits/men/2.jpg', isOnline: false },
-          { id: 3, name: 'Emma Wilson', avatar: 'https://randomuser.me/api/portraits/women/3.jpg', isOnline: true },
-          { id: 4, name: 'David Kim', avatar: 'https://randomuser.me/api/portraits/men/4.jpg', isOnline: true }
-        ],
-        activeMembers: [
-          { id: 1, name: 'Sarah Chen', avatar: 'https://randomuser.me/api/portraits/women/1.jpg' },
-          { id: 3, name: 'Emma Wilson', avatar: 'https://randomuser.me/api/portraits/women/3.jpg' }
-        ],
-        budget: {
-          total: 8000,
-          spent: 3200,
-          percentage: 40,
-          contributors: 4
-        },
-        nextActions: [
-          { title: 'Vote on hotel options', priority: 'high', hasVoting: true, votes: 2 },
-          { title: 'Book dinner reservations', priority: 'medium', hasVoting: false }
-        ]
-      },
-      {
-        id: 'trip-2',
-        destination: 'European Explorer',
-        location: 'Paris, France',
-        dates: 'Jan 10-20, 2025',
-        memberCount: 6,
-        status: 'planning',
-        isNew: true,
-        liveActivity: false,
-        image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=400&h=200&fit=crop',
-        members: [
-          { id: 5, name: 'Alex Johnson', avatar: 'https://randomuser.me/api/portraits/men/5.jpg', isOnline: false },
-          { id: 6, name: 'Lisa Park', avatar: 'https://randomuser.me/api/portraits/women/6.jpg', isOnline: true },
-          { id: 7, name: 'Tom Brown', avatar: 'https://randomuser.me/api/portraits/men/7.jpg', isOnline: false },
-          { id: 8, name: 'Nina Davis', avatar: 'https://randomuser.me/api/portraits/women/8.jpg', isOnline: true },
-          { id: 9, name: 'Chris Lee', avatar: 'https://randomuser.me/api/portraits/men/9.jpg', isOnline: false },
-          { id: 10, name: 'Maya Singh', avatar: 'https://randomuser.me/api/portraits/women/10.jpg', isOnline: true }
-        ],
-        activeMembers: [
-          { id: 6, name: 'Lisa Park', avatar: 'https://randomuser.me/api/portraits/women/6.jpg' }
-        ],
-        budget: {
-          total: 12000,
-          spent: 1800,
-          percentage: 15,
-          contributors: 3
-        },
-        nextActions: [
-          { title: 'Finalize travel dates', priority: 'high', hasVoting: true, votes: 4 },
-          { title: 'Research accommodations', priority: 'medium', hasVoting: false }
-        ]
+  const fetchTrips = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/trips", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch trips");
       }
-    ];
+
+      const tripData = await response.json();
+      console.log("Fetched trips:", tripData);
+
+      setActiveTrips(tripData);
+      setSelectedTripId(tripData && tripData.length > 0 ? tripData[0].id : null);
+      setBudgetData(tripData[0].budget);
+      setMilestones(tripData[0].milestones);
+    } catch (error) {
+      console.error("Error fetching trips:", error);
+      setActiveTrips([]); // prevent crash
+    }
+  };
+
+  fetchTrips();
 
     // Mock activities
     const mockActivities = [
@@ -277,13 +239,12 @@ const TripDashboard = () => {
       friendsPlanning: 8
     };
 
-    setActiveTrips(mockTrips);
+    
     setActivities(mockActivities);
-    setMilestones(mockMilestones);
-    setBudgetData(mockBudgetData);
+    
     setNotifications(mockNotifications);
     setDashboardStats(mockStats);
-    setSelectedTripId(mockTrips?.[0]?.id);
+    // setSelectedTripId(tripData?.[0]?.id);
   }, []);
 
   // Event handlers

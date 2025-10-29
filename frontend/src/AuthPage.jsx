@@ -19,7 +19,7 @@ export default function AuthPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ LOGIN handler
+  // ✅ LOGIN handler with JWT token save
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -27,34 +27,51 @@ export default function AuthPage() {
         userName: formData.fullName,
         password: formData.password,
       });
-      alert(response.data);
-      navigate("/homepage");
+
+      console.log("Login Response:", response.data);
+
+      // 🟩 assuming backend sends { token: "..." }
+      if (response.data.token) {
+        localStorage.setItem("jwtToken", response.data.token);
+        alert("Login Successful ✅");
+        navigate("/homepage");
+      } else {
+        alert("Login successful but token not received");
+      }
     } catch (error) {
       alert("Login failed: " + (error.response?.data || "Server error"));
       console.error(error);
     }
   };
 
-  // ✅ SIGNUP handler
+  // ✅ SIGNUP handler with token save (if backend returns token)
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-      "http://localhost:8080/api/auth/register",
-      {
-        userName: formData.fullName,
-        email: formData.email,
-        password: formData.password
-      },
-      {
-        headers: {
-          "Content-Type": "application/json" // explicitly JSON specify kar diya
+        "http://localhost:8080/api/auth/register",
+        {
+          userName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      }
-    );
+      );
 
-      alert(response.data);
-      navigate("/homepage");
+      console.log("Signup Response:", response.data);
+
+      if (response.data.token) {
+        localStorage.setItem("jwtToken", response.data.token);
+        alert("Signup Successful 🎉");
+        navigate("/homepage");
+      } else {
+        alert("Signup successful, please login");
+        setIsLogin(true);
+      }
     } catch (error) {
       alert("Signup failed: " + (error.response?.data || "Server error"));
       console.error(error);
@@ -89,11 +106,11 @@ export default function AuthPage() {
               transition={{ duration: 0.6 }}
             >
               <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
-                Welcome Back, Explorer ✈️
+                Welcome Back, Explorer ✈
               </h2>
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="flex items-center border border-gray-300 rounded-xl px-3">
-                  <FaEnvelope className="text-gray-500 mr-2" />
+                  <FaUser className="text-gray-500 mr-2" />
                   <input
                     type="text"
                     name="fullName"

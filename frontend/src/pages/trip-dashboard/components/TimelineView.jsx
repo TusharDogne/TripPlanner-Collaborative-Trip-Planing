@@ -133,54 +133,7 @@ const TimelineView = ({ milestones, onMilestoneAction }) => {
                         </Button>
                       )}
                     </div>
-                  </div>
-
-                  {/* Progress Details */}
-                  {milestone?.progress && (
-                    <div className="mt-3">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-muted-foreground">
-                          {milestone?.progress?.label}
-                        </span>
-                        <span className="text-xs font-medium text-foreground">
-                          {milestone?.progress?.current}/{milestone?.progress?.total}
-                        </span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-1.5">
-                        <div
-                          className={`h-1.5 rounded-full transition-all duration-500 ${
-                            milestone?.completed ? 'bg-success' : 'bg-primary'
-                          }`}
-                          style={{ 
-                            width: `${(milestone?.progress?.current / milestone?.progress?.total) * 100}%` 
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Contributors */}
-                  {milestone?.contributors && milestone?.contributors?.length > 0 && (
-                    <div className="flex items-center space-x-2 mt-3">
-                      <span className="text-xs text-muted-foreground">Contributors:</span>
-                      <div className="flex -space-x-1">
-                        {milestone?.contributors?.slice(0, 3)?.map((contributor, idx) => (
-                          <div
-                            key={idx}
-                            className="w-6 h-6 rounded-full border-2 border-background bg-muted flex items-center justify-center text-xs font-medium"
-                            title={contributor?.name}
-                          >
-                            {contributor?.name?.charAt(0)}
-                          </div>
-                        ))}
-                        {milestone?.contributors?.length > 3 && (
-                          <div className="w-6 h-6 rounded-full border-2 border-background bg-muted flex items-center justify-center text-xs font-medium">
-                            +{milestone?.contributors?.length - 3}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
+                  </div>               
 
                   {/* Completion Celebration */}
                   {milestone?.completed && milestone?.completedAt && (

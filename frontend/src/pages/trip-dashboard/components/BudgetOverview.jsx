@@ -10,7 +10,7 @@ const BudgetOverview = ({ budgetData, onBudgetAction }) => {
     // Animate budget values
     const animate = () => {
       setAnimatedValues({
-        totalBudget: budgetData?.totalBudget,
+        totalBudget: budgetData?.total,
         spent: budgetData?.spent,
         remaining: budgetData?.remaining
       });
@@ -33,9 +33,9 @@ const BudgetOverview = ({ budgetData, onBudgetAction }) => {
   }, []);
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'INR',
       minimumFractionDigits: 0
     })?.format(amount);
   };
@@ -48,7 +48,7 @@ const BudgetOverview = ({ budgetData, onBudgetAction }) => {
   };
 
   const getBudgetStatus = () => {
-    const percentage = (budgetData?.spent / budgetData?.totalBudget) * 100;
+    const percentage = (budgetData?.spent / budgetData?.total) * 100;
     if (percentage >= 90) return { text: 'Over Budget', color: 'text-error', icon: 'AlertTriangle' };
     if (percentage >= 75) return { text: 'Near Limit', color: 'text-warning', icon: 'AlertCircle' };
     if (percentage >= 50) return { text: 'On Track', color: 'text-accent', icon: 'TrendingUp' };
@@ -56,7 +56,7 @@ const BudgetOverview = ({ budgetData, onBudgetAction }) => {
   };
 
   const status = getBudgetStatus();
-  const spentPercentage = (budgetData?.spent / budgetData?.totalBudget) * 100;
+  const spentPercentage = (budgetData?.spent / budgetData?.total) * 100;
 
   return (
     <div className="bg-card border border-border rounded-xl p-6 shadow-soft breathing-budget">
@@ -133,7 +133,7 @@ const BudgetOverview = ({ budgetData, onBudgetAction }) => {
         {budgetData?.categories?.map((category, index) => (
           <div key={category?.name} className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className={`w-3 h-3 rounded-full ${category?.color}`}></div>
+              <div className={`w-3 h-3 rounded-full`}></div>
               <span className="text-sm font-medium text-foreground">{category?.name}</span>
             </div>
             <div className="flex items-center space-x-2">
@@ -142,7 +142,7 @@ const BudgetOverview = ({ budgetData, onBudgetAction }) => {
               </span>
               <div className="w-16 bg-muted rounded-full h-1.5">
                 <div
-                  className={`h-1.5 rounded-full transition-all duration-500 ${category?.color}`}
+                  className={`h-1.5 rounded-full transition-all duration-500`}
                   style={{ width: `${Math.min((category?.spent / category?.budget) * 100, 100)}%` }}
                 ></div>
               </div>
@@ -150,42 +150,8 @@ const BudgetOverview = ({ budgetData, onBudgetAction }) => {
           </div>
         ))}
       </div>
-      {/* Contributors */}
-      <div className="mb-6">
-        <h4 className="text-sm font-medium text-foreground mb-3">Contributors</h4>
-        <div className="space-y-2">
-          {budgetData?.contributors?.map((contributor, index) => (
-            <div key={contributor?.id} className="flex items-center justify-between p-2 bg-muted/30 rounded-lg">
-              <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
-                  {contributor?.name?.charAt(0)}
-                </div>
-                <span className="text-sm text-foreground">{contributor?.name}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium text-foreground">
-                  {formatCurrency(contributor?.contributed)}
-                </span>
-                <div className={`w-2 h-2 rounded-full ${contributor?.status === 'paid' ? 'bg-success' : contributor?.status === 'pending' ? 'bg-warning' : 'bg-muted'}`}></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
       {/* Weather Impact */}
-      {weatherImpact && (
-        <div className="mb-6 p-3 bg-accent/10 border border-accent/20 rounded-lg">
-          <div className="flex items-start space-x-2">
-            <Icon name="Cloud" size={16} className="text-accent mt-0.5" />
-            <div className="flex-1">
-              <p className="text-sm text-foreground">{weatherImpact?.message}</p>
-              <p className="text-xs text-accent font-medium mt-1">
-                Suggested adjustment: {weatherImpact?.adjustment}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      
       {/* Quick Actions */}
       <div className="flex items-center space-x-2">
         <Button
@@ -213,21 +179,6 @@ const BudgetOverview = ({ budgetData, onBudgetAction }) => {
           iconSize={14}
           onClick={() => onBudgetAction?.('calculate')}
         />
-      </div>
-      {/* Cost Predictions */}
-      <div className="mt-4 pt-4 border-t border-border">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Predicted final cost:</span>
-          <span className="font-medium text-foreground">
-            {formatCurrency(budgetData?.predictedTotal)}
-          </span>
-        </div>
-        <div className="flex items-center justify-between text-sm mt-1">
-          <span className="text-muted-foreground">Savings opportunity:</span>
-          <span className="font-medium text-success">
-            {formatCurrency(budgetData?.savingsOpportunity)}
-          </span>
-        </div>
       </div>
     </div>
   );

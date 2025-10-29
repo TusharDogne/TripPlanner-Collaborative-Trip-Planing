@@ -24,10 +24,11 @@ const TripCard = ({ trip, onViewDetails, onQuickAction }) => {
     return 'bg-primary';
   };
 
+  // ✅ Change currency from Dollar ($) to Rupee (₹)
   const formatBudget = (amount) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'INR',
       minimumFractionDigits: 0
     })?.format(amount);
   };
