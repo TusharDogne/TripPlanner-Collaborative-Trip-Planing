@@ -1,8 +1,9 @@
 package com.planners.tripplanner.user.service;
 
-import com.planners.tripplanner.config.JwtService;
+import com.planners.tripplanner.config.JwtUtil;
+import com.planners.tripplanner.user.dto.LoginRequestDto;
 import com.planners.tripplanner.user.dto.RegisterRequest;
-import com.planners.tripplanner.user.model.MyTrips;
+import com.planners.tripplanner.trip.model.MyTrips;
 import com.planners.tripplanner.user.model.Users;
 import com.planners.tripplanner.user.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +26,20 @@ public class UserGeneralServices {
     private AuthenticationManager authManager;
 
     @Autowired
-    private JwtService jwtService;
+    private JwtUtil jwtUtil;
 
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public Users saveUser(RegisterRequest registerRequest) {
-        registerRequest.setPassword(encoder.encode(registerRequest.getPassword()));
         Users user = new Users();
         user.setEmail(registerRequest.getEmail());
         user.setPassword(encoder.encode(registerRequest.getPassword()));
         user.setUserName(registerRequest.getUserName());
+        boolean emailExist = userRepo.existsByEmail(registerRequest.getEmail());
+        boolean userNameExist = userRepo.existsByUserName(registerRequest.getUserName());
+        if (emailExist || userNameExist) {
+            return null;
+        }
         return userRepo.save(user);
     }
 
@@ -42,26 +47,30 @@ public class UserGeneralServices {
 
     }
 
-    public String verifyUser(Users user) {
-        Authentication authentication = authManager
-                .authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
+    public String verifyUser(LoginRequestDto loginRequest) {
+        try {
+            Authentication authentication = authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword())
+            );
 
-        if (authentication.isAuthenticated()) {
-            Users dbUser = userRepo.findByUserName(user.getUserName());
-            user = dbUser;
-            return jwtService.generateToken(user.getUserName());
-        } else {
+            if (authentication.isAuthenticated()) {
+                Users dbUser = userRepo.findByUserName(loginRequest.getUserName());
+                Users user = dbUser;
+                return jwtUtil.generateToken(user.getUserName());
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            // This will show the real exception behind InvocationTargetException
+            e.printStackTrace();
             return null;
         }
     }
 
-    public List<MyTrips> getMyTrips() {
+    public Users getUserByUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
-        Users user = userRepo.findByUserName(userName);
-        if (user == null || user.getMyTrips() == null || user.getMyTrips().isEmpty()) {
-            return null;
-        }
-        return user.getMyTrips();
+        return userRepo.findByUserName(userName);
     }
+
 }

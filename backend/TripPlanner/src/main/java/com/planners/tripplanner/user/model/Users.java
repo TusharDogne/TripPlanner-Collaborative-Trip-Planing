@@ -1,5 +1,7 @@
 package com.planners.tripplanner.user.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.planners.tripplanner.trip.model.MyTrips;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -21,10 +23,10 @@ public class Users {
 
     @NonNull
     private String userName;
+
     @NonNull
     private String password;
     private String email;
 
-    @DBRef
-    private List<MyTrips> myTrips = new ArrayList<>();
+    private List<String> myTrips = new ArrayList<>();
 }

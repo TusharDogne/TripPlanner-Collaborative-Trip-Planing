@@ -24,7 +24,7 @@ export default function AuthPage() {
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:8080/api/auth/login", {
-        email: formData.email,
+        userName: formData.fullName,
         password: formData.password,
       });
       alert(response.data);
@@ -52,8 +52,6 @@ export default function AuthPage() {
         }
       }
     );
-
-    
 
       alert(response.data);
       navigate("/homepage");
@@ -97,10 +95,10 @@ export default function AuthPage() {
                 <div className="flex items-center border border-gray-300 rounded-xl px-3">
                   <FaEnvelope className="text-gray-500 mr-2" />
                   <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
+                    type="text"
+                    name="fullName"
+                    placeholder="Full Name"
+                    value={formData.fullName}
                     onChange={handleChange}
                     className="w-full p-3 focus:outline-none"
                   />

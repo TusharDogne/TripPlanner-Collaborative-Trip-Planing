@@ -32,7 +32,8 @@ public class UserSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST,"/api/auth/register").permitAll()
-                        .requestMatchers("/user/login").permitAll()
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/myTrip/verify-invite").permitAll()
                         .requestMatchers("/health-check").permitAll()
                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
