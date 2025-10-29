@@ -9,6 +9,7 @@ import BudgetCoordinator from './pages/budget-coordinator';
 import CollaborativePlanner from './pages/collaborative-planner';
 import CommunityGallery from './pages/community-gallery';
 import Homepage from './pages/homepage';
+import InviteFriend from "./pages/invite-friend/InviteFriend";
 
 const Routes = () => {
   return (
@@ -25,6 +26,7 @@ const Routes = () => {
         <Route path="/community-gallery" element={<CommunityGallery />} />
         <Route path="/homepage" element={<Homepage />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/invite-friend"element={<><Header /><InviteFriend /></>}/>
       </RouterRoutes>
       </ErrorBoundary>
     </BrowserRouter>
