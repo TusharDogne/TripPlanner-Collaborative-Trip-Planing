@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -37,15 +38,14 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequestDto loginRequest) {
-
-
         String token = userGeneralServices.verifyUser(loginRequest);
-        if(token != null) {
+        if (token != null) {
             System.out.println("Token: " + token);
-            return new ResponseEntity<>(token, HttpStatus.OK);
+            return ResponseEntity.ok(Map.of("token", token)); // ✅ send as JSON
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
+
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(Authentication authentication) {

@@ -1,26 +1,36 @@
 package com.planners.tripplanner.trip.controller;
 
 import com.planners.tripplanner.trip.dto.MyTripDto;
+import com.planners.tripplanner.trip.model.Milestone;
 import com.planners.tripplanner.trip.model.MyTrips;
+import com.planners.tripplanner.trip.repository.MilestoneRepo;
+import com.planners.tripplanner.trip.repository.MyTripsRepo;
+import com.planners.tripplanner.trip.service.MilestoneService;
 import com.planners.tripplanner.trip.service.MyTripService;
 import com.planners.tripplanner.user.service.UserGeneralServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/user/mytrip")
+@RequestMapping("/api")
 public class MyTripController {
 
     @Autowired
     MyTripService myTripService;
 
     @Autowired
+    MilestoneRepo mileStoneRepo;
+
+    @Autowired
     UserGeneralServices userGeneralServices;
+    @Autowired
+    private MyTripsRepo myTripsRepo;
+    @Autowired
+    private MilestoneService milestoneService;
 
 //    EmailService emailService;
 
@@ -33,14 +43,26 @@ public class MyTripController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/getMyTrips")
+
+
+    @GetMapping("/trips")
     public ResponseEntity<?> getMyTrips(){
+
         List<MyTrips> myTrips= myTripService.getMyTrips();
         if(myTrips == null || myTrips.isEmpty()) {
             return new ResponseEntity<>("No Trips found", HttpStatus.NO_CONTENT);
         }
+        System.out.println("myTrips size: "+myTrips.size());
         return new ResponseEntity<>(myTrips, HttpStatus.OK);
     }
 
+    @PostMapping("/add-milestone")
+    public ResponseEntity<?> addTrip(@RequestBody Milestone milestone) {
+        Milestone milestone1 = milestoneService.addMileStone(milestone);
+        if(milestone1 != null) {
+            return new ResponseEntity<>(milestone1, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 
 }

@@ -48,4 +48,7 @@ public class MyTrips {
 
     @DBRef(lazy = false)
     private List<Activity> nextActions;
+
+    @DBRef
+    List<Milestone> milestones = new ArrayList<>();
 }

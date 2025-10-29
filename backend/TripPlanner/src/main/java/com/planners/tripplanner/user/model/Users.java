@@ -25,6 +25,9 @@ public class Users {
     private String userName;
 
     @NonNull
+    private String userImage;
+
+    @NonNull
     private String password;
     private String email;
 

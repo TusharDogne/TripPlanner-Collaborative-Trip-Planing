@@ -2,6 +2,7 @@ package com.planners.tripplanner.trip.service;
 
 import com.planners.tripplanner.trip.dto.MyTripDto;
 import com.planners.tripplanner.trip.model.Budget;
+import com.planners.tripplanner.trip.model.Milestone;
 import com.planners.tripplanner.trip.model.MyTrips;
 import com.planners.tripplanner.trip.repository.MyTripsRepo;
 import com.planners.tripplanner.user.model.Users;
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -43,10 +45,18 @@ public class MyTripService {
         myTrips.setTripAdmin(admin);
 
 // Budget (if DTO has budget info)
-        Budget budget = new Budget();
-        budget.setBudget(myTripDto.getBudget());
-        budget.setSpent(0);
-        myTrips.setBudget(budget);
+        myTrips.setBudget(myTripDto.getBudget());
+
+        // Adding initial mileStone
+        Milestone milestone = new Milestone();
+        milestone.setType("created");
+        milestone.setTitle(myTripDto.getTripName() + " trip created");
+        milestone.setDescription(myTripDto.getTripName() + "planning started");
+        milestone.setCompleted(true);
+        milestone.setCompletedAt(new Date());
+        milestone.setCurrent(true);
+        milestone.setActionable(false);
+        milestone.setDueDate(new Date());
 
         // Admin added to member list initially
         List<Users> members = new ArrayList<>();
