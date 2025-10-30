@@ -1,19 +1,11 @@
 import React, { useState } from "react";
 import Icon from "../../../components/AppIcon";
+import axios from "axios";
 
 const QuickActions = ({ onAction }) => {
   const [activeAction, setActiveAction] = useState(null);
-  const [recentActions, setRecentActions] = useState([
-    { action: "Created poll for restaurant choice", time: "2 minutes ago", user: "You" },
-    { action: "Added $45 dinner expense", time: "15 minutes ago", user: "Sarah" },
-    { action: "Suggested visiting local museum", time: "1 hour ago", user: "Mike" },
-  ]);
-
-  // Invite modal states
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const [inviteData, setInviteData] = useState({ email: "", tripId: "" });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
 
   const quickActions = [
     { id: "create-poll", title: "Create Poll", description: "Get group consensus on decisions", icon: "Vote", color: "bg-primary text-primary-foreground", shortcut: "P" },
@@ -28,40 +20,49 @@ const QuickActions = ({ onAction }) => {
     setActiveAction(actionId);
     if (actionId === "invite-friend") {
       setShowInviteModal(true);
+      return;
     }
     onAction?.(actionId);
     setTimeout(() => setActiveAction(null), 200);
   };
 
+  // 🧠 Handle invite submit
   const handleInviteSubmit = async (e) => {
     e.preventDefault();
+    const name = e.target.name.value;
+    const email = e.target.email.value;
+    const message = e.target.message.value;
+
+    if (!name || !email || !message) {
+      alert("Please fill all fields");
+      return;
+    }
+
     setLoading(true);
-    setMessage("");
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8080/api/invite", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(inviteData),
-      });
+      const token = localStorage.getItem("token"); // 🟢 JWT token pick from localStorage
 
-      const data = await res.json();
-      if (res.ok) {
-        setMessage("✅ Invite sent successfully!");
-        setRecentActions((prev) => [
-          { action: `Invited ${inviteData.email} to trip ${inviteData.tripId}`, time: "Just now", user: "You" },
-          ...prev,
-        ]);
-        setInviteData({ email: "", tripId: "" });
-      } else {
-        setMessage(data.message || "Failed to send invite.");
-      }
+      const response = await axios.post(
+        "http://localhost:5000/api/invite", // ⚙️ Replace with your backend API endpoint
+        {
+          name,
+          email,
+          message,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // 🟢 Token send to backend
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      alert(`Invitation sent successfully to ${name}! 🎉`);
+      setShowInviteModal(false);
     } catch (error) {
-      setMessage("Error connecting to server.");
+      console.error("Error sending invite:", error);
+      alert("Failed to send invite. Check console for details.");
     } finally {
       setLoading(false);
     }
@@ -86,7 +87,7 @@ const QuickActions = ({ onAction }) => {
             onClick={() => handleActionClick(action.id)}
             className={`group relative p-4 rounded-lg border border-border hover:border-primary/50 transition-all duration-200 text-left ${
               activeAction === action.id ? "scale-95" : "hover:scale-105"
-            } magnetic-pull`}
+            }`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-transparent to-muted/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="relative">
@@ -95,11 +96,6 @@ const QuickActions = ({ onAction }) => {
               </div>
               <h4 className="font-medium text-foreground mb-1 group-hover:text-primary transition-colors">{action.title}</h4>
               <p className="text-xs text-muted-foreground line-clamp-2">{action.description}</p>
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="w-6 h-6 bg-background border border-border rounded text-xs font-medium flex items-center justify-center text-muted-foreground">
-                  {action.shortcut}
-                </div>
-              </div>
             </div>
           </button>
         ))}
@@ -107,75 +103,56 @@ const QuickActions = ({ onAction }) => {
 
       {/* Invite Friend Modal */}
       {showInviteModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 shadow-lg w-80 relative animate-fadeIn">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-2xl w-[90%] max-w-md relative">
             <button
               onClick={() => setShowInviteModal(false)}
-              className="absolute top-2 right-3 text-gray-500 hover:text-red-500"
+              className="absolute top-3 right-3 text-gray-500 hover:text-red-500"
             >
-              ✖
+              ✕
             </button>
-            <h3 className="text-lg font-semibold mb-3 text-center">Invite a Friend</h3>
-            <form onSubmit={handleInviteSubmit} className="space-y-3">
-              <input
-                type="email"
-                placeholder="Friend's Email"
-                value={inviteData.email}
-                onChange={(e) => setInviteData({ ...inviteData, email: e.target.value })}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring focus:ring-primary/30"
-                required
-              />
-              <input
-                type="text"
-                placeholder="Trip ID"
-                value={inviteData.tripId}
-                onChange={(e) => setInviteData({ ...inviteData, tripId: e.target.value })}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring focus:ring-primary/30"
-                required
-              />
+            <h3 className="text-lg font-semibold mb-4 text-center text-foreground">
+              Invite a Friend to Join Trip ✈️
+            </h3>
+            <form onSubmit={handleInviteSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Friend’s Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  className="w-full border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Enter name"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  className="w-full border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Enter email"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Message</label>
+                <textarea
+                  name="message"
+                  rows="3"
+                  className="w-full border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Write a personal message..."
+                ></textarea>
+              </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary/90 transition-all"
+                className="w-full bg-primary text-white py-2 rounded-lg hover:bg-primary/90 transition-all disabled:opacity-70"
               >
-                {loading ? "Sending..." : "Send Invite"}
+                {loading ? "Sending..." : "Send Invite 🚀"}
               </button>
             </form>
-            {message && <p className="text-sm text-center mt-2">{message}</p>}
           </div>
         </div>
       )}
-
-      {/* Recent Actions */}
-      <div className="mt-6 pt-4 border-t border-border">
-        <h4 className="text-sm font-medium text-foreground mb-3">Recent Actions</h4>
-        <div className="space-y-2">
-          {recentActions.map((item, index) => (
-            <div key={index} className="flex items-center justify-between text-sm">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <span className="text-foreground">{item.action}</span>
-              </div>
-              <div className="flex items-center space-x-2 text-muted-foreground">
-                <span>{item.user}</span>
-                <span>•</span>
-                <span>{item.time}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Tip */}
-      <div className="mt-4 p-3 bg-muted/30 rounded-lg">
-        <div className="flex items-center space-x-2 mb-2">
-          <Icon name="Keyboard" size={14} className="text-muted-foreground" />
-          <span className="text-xs font-medium text-foreground">Pro Tip</span>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Use keyboard shortcuts (Cmd/Ctrl + letter) for faster access to actions
-        </p>
-      </div>
     </div>
   );
 };
