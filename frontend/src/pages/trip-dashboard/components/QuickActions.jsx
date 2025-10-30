@@ -29,11 +29,10 @@ const QuickActions = ({ onAction }) => {
   // 🧠 Handle invite submit
   const handleInviteSubmit = async (e) => {
     e.preventDefault();
-    const name = e.target.name.value;
-    const email = e.target.email.value;
-    const message = e.target.message.value;
+    const tripId = e.target.tripId.value;
+    const toEmail = e.target.email.value;
 
-    if (!name || !email || !message) {
+    if (!tripId || !toEmail) {
       alert("Please fill all fields");
       return;
     }
@@ -41,14 +40,14 @@ const QuickActions = ({ onAction }) => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token"); // 🟢 JWT token pick from localStorage
+      const token = localStorage.getItem("jwtToken"); // 🟢 JWT token pick from localStorage
+      console.log(token)
 
       const response = await axios.post(
-        "http://localhost:5000/api/invite", // ⚙️ Replace with your backend API endpoint
+        "http://localhost:8080/myTrip/invite", // ⚙️ Replace with your backend API endpoint
         {
-          name,
-          email,
-          message,
+          tripId,
+          toEmail   
         },
         {
           headers: {
@@ -58,7 +57,7 @@ const QuickActions = ({ onAction }) => {
         }
       );
 
-      alert(`Invitation sent successfully to ${name}! 🎉`);
+      alert(`Invitation sent successfully to ${toEmail}! 🎉`);
       setShowInviteModal(false);
     } catch (error) {
       console.error("Error sending invite:", error);
@@ -116,12 +115,12 @@ const QuickActions = ({ onAction }) => {
             </h3>
             <form onSubmit={handleInviteSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-1">Friend’s Name</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Trip Id</label>
                 <input
                   type="text"
-                  name="name"
+                  name="tripId"
                   className="w-full border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Enter name"
+                  placeholder="Enter Trip Id"
                 />
               </div>
               <div>
@@ -132,15 +131,6 @@ const QuickActions = ({ onAction }) => {
                   className="w-full border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="Enter email"
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-1">Message</label>
-                <textarea
-                  name="message"
-                  rows="3"
-                  className="w-full border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Write a personal message..."
-                ></textarea>
               </div>
               <button
                 type="submit"

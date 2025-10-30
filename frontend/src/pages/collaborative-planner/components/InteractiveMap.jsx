@@ -3,7 +3,8 @@ import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 
 const InteractiveMap = ({ suggestions, onSuggestionClick, activeUsers, selectedSuggestion }) => {
-  const [mapCenter, setMapCenter] = useState({ lat: 40.7128, lng: -74.0060 }); // New York default
+  // 🌍 Default location set to Goa, India
+  const [mapCenter, setMapCenter] = useState({ lat: 15.2993, lng: 74.1240 });
   const [zoomLevel, setZoomLevel] = useState(12);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -95,7 +96,6 @@ const InteractiveMap = ({ suggestions, onSuggestionClick, activeUsers, selectedS
                 </span>
               </div>
             </div>
-            
             {/* Pin stem */}
             <div
               className="absolute top-full left-1/2 transform -translate-x-1/2 w-0.5 h-4"

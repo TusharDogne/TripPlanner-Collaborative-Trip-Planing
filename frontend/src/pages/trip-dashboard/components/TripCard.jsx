@@ -146,6 +146,13 @@ const TripCard = ({ trip, onViewDetails, onQuickAction }) => {
           Invite
         </Button>
       </div>
+
+       {/* Trip ID Display */}
+      <div className="mb-4">
+        <span className="text-sm font-medium text-foreground">Trip ID:</span>{" "}
+        <span className="text-sm text-muted-foreground">{trip?.id}</span>
+      </div>
+
       {/* Budget Status */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
