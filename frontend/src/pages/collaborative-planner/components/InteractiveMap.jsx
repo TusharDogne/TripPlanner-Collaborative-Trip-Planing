@@ -2,25 +2,49 @@ import React, { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 
+const GOOGLE_MAPS_API_KEY = 'YOUR_API_KEY_HERE'; // 🔑 Replace with your real key
+
 const InteractiveMap = ({ suggestions, onSuggestionClick, activeUsers, selectedSuggestion }) => {
-  // 🌍 Default location set to Goa, India
-  const [mapCenter, setMapCenter] = useState({ lat: 15.2993, lng: 74.1240 });
+  const [mapCenter, setMapCenter] = useState({ name: 'Goa, India' });
   const [zoomLevel, setZoomLevel] = useState(12);
   const [isLoading, setIsLoading] = useState(true);
 
+  // 🗺️ Convert place name → coordinates if lat/lng are missing
   useEffect(() => {
-    // Simulate map loading
-    const timer = setTimeout(() => setIsLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
+    const fetchCoordinates = async () => {
+      if (mapCenter.lat && mapCenter.lng) {
+        setIsLoading(false);
+        return;
+      }
 
-  const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 1, 18));
-  };
+      if (mapCenter.name) {
+        try {
+          const res = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+              mapCenter.name
+            )}&key=${GOOGLE_MAPS_API_KEY}`
+          );
+          const data = await res.json();
+          const location = data.results?.[0]?.geometry?.location;
 
-  const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 1, 8));
-  };
+          if (location) {
+            setMapCenter({ lat: location.lat, lng: location.lng });
+          } else {
+            console.error('Could not find coordinates for:', mapCenter.name);
+          }
+        } catch (error) {
+          console.error('Error fetching coordinates:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchCoordinates();
+  }, [mapCenter.name]);
+
+  const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 1, 18));
+  const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 1, 8));
 
   const getSuggestionColor = (userId) => {
     const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3', '#F38BA8'];
@@ -48,10 +72,15 @@ const InteractiveMap = ({ suggestions, onSuggestionClick, activeUsers, selectedS
           loading="lazy"
           title="Trip Planning Map"
           referrerPolicy="no-referrer-when-downgrade"
-          src={`https://www.google.com/maps?q=${mapCenter?.lat},${mapCenter?.lng}&z=${zoomLevel}&output=embed`}
+          src={`https://www.google.com/maps?q=${
+            mapCenter.lat && mapCenter.lng
+              ? `${mapCenter.lat},${mapCenter.lng}`
+              : encodeURIComponent(mapCenter.name || 'India')
+          }&z=${zoomLevel}&output=embed`}
           className="border-0"
         />
       </div>
+
       {/* Map Controls */}
       <div className="absolute top-4 right-4 flex flex-col space-y-2 z-10">
         <button
@@ -67,7 +96,8 @@ const InteractiveMap = ({ suggestions, onSuggestionClick, activeUsers, selectedS
           <Icon name="Minus" size={16} />
         </button>
       </div>
-      {/* Suggestion Pins Overlay */}
+
+      {/* Suggestion Pins */}
       <div className="absolute inset-0 pointer-events-none z-20">
         {suggestions?.map((suggestion, index) => (
           <div
@@ -96,7 +126,6 @@ const InteractiveMap = ({ suggestions, onSuggestionClick, activeUsers, selectedS
                 </span>
               </div>
             </div>
-            {/* Pin stem */}
             <div
               className="absolute top-full left-1/2 transform -translate-x-1/2 w-0.5 h-4"
               style={{ backgroundColor: getSuggestionColor(suggestion?.addedBy?.id) }}
@@ -104,7 +133,8 @@ const InteractiveMap = ({ suggestions, onSuggestionClick, activeUsers, selectedS
           </div>
         ))}
       </div>
-      {/* Active Users Indicator */}
+
+      {/* Active Users */}
       <div className="absolute bottom-4 left-4 bg-background/95 backdrop-blur-sm border border-border rounded-lg px-3 py-2 z-10">
         <div className="flex items-center space-x-2">
           <div className="flex -space-x-2">
@@ -130,6 +160,7 @@ const InteractiveMap = ({ suggestions, onSuggestionClick, activeUsers, selectedS
           </div>
         </div>
       </div>
+
       {/* Map Legend */}
       <div className="absolute bottom-4 right-4 bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 z-10">
         <div className="space-y-2">

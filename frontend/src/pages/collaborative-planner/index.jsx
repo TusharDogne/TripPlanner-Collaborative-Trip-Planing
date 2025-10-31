@@ -23,22 +23,33 @@ const CollaborativePlanner = () => {
   useEffect(() => {
     if (!tripId) {
       console.warn("No tripId found. Redirecting to trips page...");
-      navigate('/my-trips');
-    } else {
-      console.log("✅ TripId received:", tripId);
-
-      // Example of fetching trip details (optional)
-      fetch(`http://localhost:8080/api/trip/${tripId}`)
-        .then(res => {
-          if (!res.ok) throw new Error("Trip not found");
-          return res.json();
-        })
-        .then(data => {
-          console.log("Fetched trip details:", data);
-          setActiveTrip(data);
-        })
-        .catch(err => console.error("Error fetching trip:", err));
+      setTimeout(() => navigate('/my-trips'), 0);
+      return;
     }
+
+    console.log("✅ TripId received: here check", tripId);
+
+    // ✅ Fetching trip details with JWT token
+    const token = localStorage.getItem("jwtToken");
+    console.log("JWT Token (before API call):", token);
+
+    fetch(`http://localhost:8080/api/trip/${tripId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        console.log("Response status:", res.status);
+        if (!res.ok) throw new Error("Trip not found or unauthorized");
+        return res.json();
+      })
+      .then(data => {
+        console.log("Fetched trip details:", data);
+        setActiveTrip(data);
+      })
+      .catch(err => console.error("❌ Error fetching trip:", err));
   }, [tripId, navigate]);
 
   // Mock active users
