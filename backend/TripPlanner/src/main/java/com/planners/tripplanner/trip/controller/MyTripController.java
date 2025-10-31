@@ -23,12 +23,12 @@ public class MyTripController {
     MyTripService myTripService;
 
     @Autowired
-    MilestoneRepo mileStoneRepo;
+    MyTripsRepo myTripsRepo;
+
 
     @Autowired
     UserGeneralServices userGeneralServices;
-    @Autowired
-    private MyTripsRepo myTripsRepo;
+
     @Autowired
     private MilestoneService milestoneService;
 
@@ -54,6 +54,16 @@ public class MyTripController {
         }
         System.out.println("myTrips size: "+myTrips.size());
         return new ResponseEntity<>(myTrips, HttpStatus.OK);
+    }
+
+    @GetMapping("/trip/{tripId}")
+    public ResponseEntity<?> getMyTripById(@PathVariable String tripId) {
+
+        MyTrips myTrip = myTripsRepo.findMyTripsById(tripId);
+        if(myTrip == null ) {
+            return new ResponseEntity<>("No Trips found", HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(myTrip, HttpStatus.OK);
     }
 
     @PostMapping("/add-milestone")

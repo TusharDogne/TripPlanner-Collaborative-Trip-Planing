@@ -30,6 +30,7 @@ public class TripInviteController {
 
     @PostMapping("/invite")
     public ResponseEntity<?> inviteMember(@RequestBody TripInviteDTO tripInviteDTO) {
+        System.out.println("Inside inviteMember");
         MyTrips myTrips = myTripsRepo.findMyTripsById(tripInviteDTO.getTripId());
         if(myTrips == null){
             return new ResponseEntity<>("Trip not found",HttpStatus.BAD_REQUEST);
