@@ -11,7 +11,12 @@ const InteractiveMap = ({
   selectedSuggestion,
   activeTrip, // ✅ New prop
 }) => {
-  const [mapCenter, setMapCenter] = useState({ name: 'India' });
+  const [mapCenter, setMapCenter] = useState({
+    name: 'Goa',
+    lat: 15.2993,
+    lng: 74.1240,
+  });
+
   const [zoomLevel, setZoomLevel] = useState(12);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,7 +25,7 @@ const InteractiveMap = ({
     console.log("Fetched trip details in map:", activeTrip);
     if (!activeTrip) return;
 
-    
+
     // ✅ Case 1: If only destination name available
     if (activeTrip.destination) {
       setMapCenter({ name: activeTrip.destination });
@@ -97,11 +102,10 @@ const InteractiveMap = ({
           loading="lazy"
           title="Trip Planning Map"
           referrerPolicy="no-referrer-when-downgrade"
-          src={`https://www.google.com/maps?q=${
-            mapCenter.lat && mapCenter.lng
+          src={`https://www.google.com/maps?q=${mapCenter.lat && mapCenter.lng
               ? `${mapCenter.lat},${mapCenter.lng}`
               : encodeURIComponent(mapCenter.name || 'India')
-          }&z=${zoomLevel}&output=embed`}
+            }&z=${zoomLevel}&output=embed`}
           className="border-0"
         />
       </div>
@@ -135,9 +139,8 @@ const InteractiveMap = ({
             onClick={() => onSuggestionClick(suggestion)}
           >
             <div
-              className={`relative w-8 h-8 rounded-full border-2 border-white shadow-collaborative transition-transform hover:scale-110 ${
-                selectedSuggestion?.id === suggestion?.id ? 'scale-125 ring-2 ring-primary' : ''
-              }`}
+              className={`relative w-8 h-8 rounded-full border-2 border-white shadow-collaborative transition-transform hover:scale-110 ${selectedSuggestion?.id === suggestion?.id ? 'scale-125 ring-2 ring-primary' : ''
+                }`}
               style={{ backgroundColor: getSuggestionColor(suggestion?.addedBy?.id) }}
             >
               <Image

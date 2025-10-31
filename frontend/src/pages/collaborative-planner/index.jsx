@@ -23,8 +23,6 @@ const CollaborativePlanner = () => {
   useEffect(() => {
     if (!tripId) {
       console.warn("No tripId found. Redirecting to trips page...");
-      alert("No Active Trip found. Redirecting to Discover page where you can explore trips");
-      // setTimeout(() => navigate('/smart-recommendations'), 0);
       return;
     }
 
@@ -195,7 +193,7 @@ const CollaborativePlanner = () => {
                 ⚠️ No Active Trip Found
               </h2>
               <p className="mb-6 max-w-md">
-                You haven’t selected any active trip yet. Please go to the <strong>Dashboard</strong> page to select a trip, and if you don’t have any trips, go to the <strong>Discover</strong> page to explore and start planning a trip.
+                You haven’t selected any active trip yet. Please go to the <strong>Dashboard</strong> page to select a trip, and if you haven't started any trips, go to the <strong>Discover</strong> page to explore and start planning a trip.
               </p>
 
               <div className="flex space-x-4">
