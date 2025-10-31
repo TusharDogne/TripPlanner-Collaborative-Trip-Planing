@@ -4,12 +4,30 @@ import Image from '../../../components/AppImage';
 
 const GOOGLE_MAPS_API_KEY = 'YOUR_API_KEY_HERE'; // 🔑 Replace with your real key
 
-const InteractiveMap = ({ suggestions, onSuggestionClick, activeUsers, selectedSuggestion }) => {
-  const [mapCenter, setMapCenter] = useState({ name: 'Goa, India' });
+const InteractiveMap = ({
+  suggestions,
+  onSuggestionClick,
+  activeUsers,
+  selectedSuggestion,
+  activeTrip, // ✅ New prop
+}) => {
+  const [mapCenter, setMapCenter] = useState({ name: 'India' });
   const [zoomLevel, setZoomLevel] = useState(12);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 🗺️ Convert place name → coordinates if lat/lng are missing
+  // 🗺️ Set map center from activeTrip
+  useEffect(() => {
+    console.log("Fetched trip details in map:", activeTrip);
+    if (!activeTrip) return;
+
+    
+    // ✅ Case 1: If only destination name available
+    if (activeTrip.destination) {
+      setMapCenter({ name: activeTrip.destination });
+    }
+  }, [activeTrip]);
+
+  // 🧭 Convert destination name → coordinates
   useEffect(() => {
     const fetchCoordinates = async () => {
       if (mapCenter.lat && mapCenter.lng) {
@@ -64,6 +82,13 @@ const InteractiveMap = ({ suggestions, onSuggestionClick, activeUsers, selectedS
 
   return (
     <div className="relative h-full bg-card rounded-lg overflow-hidden border border-border">
+      {/* 🗺️ Trip Title */}
+      <div className="absolute top-3 left-4 z-10 bg-background/80 backdrop-blur-md px-3 py-1 rounded-lg border border-border shadow-sm">
+        <h2 className="text-sm font-medium text-foreground">
+          {activeTrip?.tripName || 'Trip'} — {activeTrip?.destination || 'Unknown'}
+        </h2>
+      </div>
+
       {/* Map Container */}
       <div className="absolute inset-0">
         <iframe

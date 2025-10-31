@@ -23,7 +23,8 @@ const CollaborativePlanner = () => {
   useEffect(() => {
     if (!tripId) {
       console.warn("No tripId found. Redirecting to trips page...");
-      setTimeout(() => navigate('/my-trips'), 0);
+      alert("No Active Trip found. Redirecting to Discover page where you can explore trips");
+      // setTimeout(() => navigate('/smart-recommendations'), 0);
       return;
     }
 
@@ -147,7 +148,9 @@ const CollaborativePlanner = () => {
 
   const handleSuggestionClick = (suggestion) => setSelectedSuggestion(suggestion);
 
+
   return (
+
     <div className="min-h-screen bg-background">
       <Header />
       <div className="pt-16 h-screen flex flex-col">
@@ -184,6 +187,38 @@ const CollaborativePlanner = () => {
           </div>
         </div>
 
+        {/* 🚨 Show alert if tripId not found */}
+        {
+          !tripId && (
+            <div className="flex flex-col items-center justify-center h-[70vh] text-center text-muted-foreground">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
+                ⚠️ No Active Trip Found
+              </h2>
+              <p className="mb-6 max-w-md">
+                You haven’t selected any active trip yet. Please go to the <strong>Dashboard</strong> page to select a trip, and if you don’t have any trips, go to the <strong>Discover</strong> page to explore and start planning a trip.
+              </p>
+
+              <div className="flex space-x-4">
+                <Button
+                  variant="default"
+                  size="lg"
+                  onClick={() => navigate('/trip-dashboard')}
+                >
+                  Go to Dashboard
+                </Button>
+                <Button
+                  variant="default"
+                  size="lg"
+                  onClick={() => navigate('/smart-recommendations')}
+                >
+                  Go to Discover
+                </Button>
+              </div>
+            </div>
+          )
+        }
+
+
         {/* Main Content */}
         <div className="flex-1 flex overflow-hidden">
           <div className="flex-1 p-4">
@@ -192,6 +227,7 @@ const CollaborativePlanner = () => {
               onSuggestionClick={handleSuggestionClick}
               activeUsers={activeUsers}
               selectedSuggestion={selectedSuggestion}
+              activeTrip={activeTrip}   // ✅ Add here (line ~236)
             />
           </div>
 
