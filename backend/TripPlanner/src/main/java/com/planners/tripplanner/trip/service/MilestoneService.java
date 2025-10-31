@@ -37,6 +37,7 @@ public class MilestoneService {
 
         Milestone savedMilestone = mileStoneRepo.save(mileStone);
         mytrip.getMilestones().add(savedMilestone);
+        myTripsRepo.save(mytrip);
 
         return  savedMilestone;
     }

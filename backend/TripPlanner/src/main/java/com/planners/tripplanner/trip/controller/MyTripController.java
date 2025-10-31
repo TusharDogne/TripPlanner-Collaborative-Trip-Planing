@@ -67,7 +67,7 @@ public class MyTripController {
     }
 
     @PostMapping("/add-milestone")
-    public ResponseEntity<?> addTrip(@RequestBody Milestone milestone) {
+    public ResponseEntity<?> addMilestone(@RequestBody Milestone milestone) {
         Milestone milestone1 = milestoneService.addMileStone(milestone);
         if(milestone1 != null) {
             return new ResponseEntity<>(milestone1, HttpStatus.CREATED);
