@@ -5,6 +5,8 @@ import Button from '../../../components/ui/Button';
 const BudgetOptimizer = ({ recommendations, groupBudget = 2000, onOptimize }) => {
   const [selectedAlternatives, setSelectedAlternatives] = useState([]);
   const [showComparison, setShowComparison] = useState(false);
+  const [loadingTripId, setLoadingTripId] = useState(null);
+  const [addedTrips, setAddedTrips] = useState([]);
 
   const budgetBreakdown = {
     accommodation: { current: 800, optimized: 600, savings: 200 },
@@ -20,6 +22,7 @@ const BudgetOptimizer = ({ recommendations, groupBudget = 2000, onOptimize }) =>
   const alternatives = [
     {
       id: 1,
+      tripId: "T001",
       category: "Accommodation",
       original: "Hotel Le Grand Paris",
       originalPrice: 200,
@@ -33,6 +36,7 @@ const BudgetOptimizer = ({ recommendations, groupBudget = 2000, onOptimize }) =>
     },
     {
       id: 2,
+      tripId: "T002",
       category: "Activities",
       original: "Private Seine River Cruise",
       originalPrice: 80,
@@ -46,6 +50,7 @@ const BudgetOptimizer = ({ recommendations, groupBudget = 2000, onOptimize }) =>
     },
     {
       id: 3,
+      tripId: "T003",
       category: "Dining",
       original: "Michelin Star Restaurant",
       originalPrice: 120,
@@ -60,19 +65,43 @@ const BudgetOptimizer = ({ recommendations, groupBudget = 2000, onOptimize }) =>
   ];
 
   const handleAlternativeToggle = (alternativeId) => {
-    setSelectedAlternatives(prev => 
-      prev?.includes(alternativeId)
-        ? prev?.filter(id => id !== alternativeId)
+    setSelectedAlternatives(prev =>
+      prev.includes(alternativeId)
+        ? prev.filter(id => id !== alternativeId)
         : [...prev, alternativeId]
     );
   };
 
   const calculateSelectedSavings = () => {
-    return alternatives?.filter(alt => selectedAlternatives?.includes(alt?.id))?.reduce((sum, alt) => sum + alt?.savings, 0);
+    return alternatives
+      .filter(alt => selectedAlternatives.includes(alt.id))
+      .reduce((sum, alt) => sum + alt.savings, 0);
+  };
+
+  // 🧩 Add to Trip API call (sirf tripId bhejna hai)
+  const handleAddToTrip = async (tripId) => {
+    try {
+      setLoadingTripId(tripId);
+      const response = await fetch("http://localhost:8080/allTrips/addTripToMyTrips", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tripId }),
+      });
+
+      if (!response.ok) throw new Error("Failed to add trip");
+
+      setAddedTrips((prev) => [...prev, tripId]);
+    } catch (error) {
+      console.error("Error adding trip:", error);
+      alert("⚠️ Something went wrong while adding the trip!");
+    } finally {
+      setLoadingTripId(null);
+    }
   };
 
   return (
     <div className="bg-card rounded-xl border border-border p-6">
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-success/10 rounded-lg">
@@ -95,149 +124,110 @@ const BudgetOptimizer = ({ recommendations, groupBudget = 2000, onOptimize }) =>
           {showComparison ? "Hide" : "Compare"}
         </Button>
       </div>
+
       {/* Budget Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-background rounded-lg p-4 border border-border">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-foreground">${currentTotal}</div>
-            <div className="text-sm text-muted-foreground">Current Budget</div>
-          </div>
+        <div className="bg-background rounded-lg p-4 border border-border text-center">
+          <div className="text-2xl font-bold text-foreground">${currentTotal}</div>
+          <div className="text-sm text-muted-foreground">Current Budget</div>
         </div>
-        <div className="bg-success/5 rounded-lg p-4 border border-success/20">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-success">${optimizedTotal}</div>
-            <div className="text-sm text-muted-foreground">Optimized Budget</div>
-          </div>
+        <div className="bg-success/5 rounded-lg p-4 border border-success/20 text-center">
+          <div className="text-2xl font-bold text-success">${optimizedTotal}</div>
+          <div className="text-sm text-muted-foreground">Optimized Budget</div>
         </div>
-        <div className="bg-accent/5 rounded-lg p-4 border border-accent/20">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-accent">${totalSavings}</div>
-            <div className="text-sm text-muted-foreground">Potential Savings</div>
-          </div>
+        <div className="bg-accent/5 rounded-lg p-4 border border-accent/20 text-center">
+          <div className="text-2xl font-bold text-accent">${totalSavings}</div>
+          <div className="text-sm text-muted-foreground">Potential Savings</div>
         </div>
       </div>
-      {/* Budget Breakdown */}
-      {showComparison && (
-        <div className="mb-6">
-          <h4 className="font-medium text-foreground mb-4">Budget Breakdown</h4>
-          <div className="space-y-3">
-            {Object.entries(budgetBreakdown)?.map(([category, data]) => (
-              <div key={category} className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
-                <div className="flex items-center space-x-3">
-                  <Icon 
-                    name={
-                      category === 'accommodation' ? 'Bed' :
-                      category === 'activities' ? 'MapPin' :
-                      category === 'dining' ? 'Utensils' : 'Car'
-                    } 
-                    size={16} 
-                    className="text-muted-foreground" 
-                  />
-                  <span className="font-medium capitalize">{category}</span>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="text-right">
-                    <div className="text-sm line-through text-muted-foreground">${data?.current}</div>
-                    <div className="text-sm font-medium text-success">${data?.optimized}</div>
-                  </div>
-                  <div className="text-accent font-medium">-${data?.savings}</div>
-                </div>
+
+      {/* Smart Alternatives */}
+      <h4 className="font-medium text-foreground mb-4">Smart Alternatives</h4>
+      <div className="space-y-4">
+        {alternatives.map((alt) => (
+          <div
+            key={alt.id}
+            className={`border rounded-lg p-4 transition-organic ${
+              selectedAlternatives.includes(alt.id)
+                ? 'border-success bg-success/5'
+                : 'border-border bg-background hover:border-primary/50'
+            }`}
+          >
+            <div className="flex items-start space-x-4">
+              <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                <img src={alt.image} alt={alt.alternative} className="w-full h-full object-cover" />
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-      {/* Alternative Recommendations */}
-      <div>
-        <h4 className="font-medium text-foreground mb-4">Smart Alternatives</h4>
-        <div className="space-y-4">
-          {alternatives?.map((alternative) => (
-            <div
-              key={alternative?.id}
-              className={`border rounded-lg p-4 transition-organic cursor-pointer ${
-                selectedAlternatives?.includes(alternative?.id)
-                  ? 'border-success bg-success/5' :'border-border bg-background hover:border-primary/50'
-              }`}
-              onClick={() => handleAlternativeToggle(alternative?.id)}
-            >
-              <div className="flex items-start space-x-4">
-                <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                  <img
-                    src={alternative?.image}
-                    alt={alternative?.alternative}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                
-                <div className="flex-1">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <div className="text-xs text-muted-foreground uppercase tracking-wide">
-                        {alternative?.category}
-                      </div>
-                      <h5 className="font-medium text-foreground">{alternative?.alternative}</h5>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <Icon name="Star" size={14} className="text-accent fill-current" />
-                        <span className="text-sm">{alternative?.rating}</span>
-                      </div>
+
+              <div className="flex-1">
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide">
+                      {alt.category}
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm line-through text-muted-foreground">
-                        ${alternative?.originalPrice}
-                      </div>
-                      <div className="text-lg font-bold text-success">
-                        ${alternative?.alternativePrice}
-                      </div>
-                      <div className="text-sm text-accent font-medium">
-                        Save ${alternative?.savings}
-                      </div>
+                    <h5 className="font-medium text-foreground">{alt.alternative}</h5>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <Icon name="Star" size={14} className="text-accent fill-current" />
+                      <span className="text-sm">{alt.rating}</span>
                     </div>
                   </div>
-
-                  {/* Features & Tradeoffs */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                    <div>
-                      <div className="text-xs font-medium text-success mb-1">Includes:</div>
-                      <ul className="text-xs text-muted-foreground space-y-0.5">
-                        {alternative?.features?.map((feature, index) => (
-                          <li key={index} className="flex items-center space-x-1">
-                            <Icon name="Check" size={12} className="text-success" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-warning mb-1">Consider:</div>
-                      <ul className="text-xs text-muted-foreground space-y-0.5">
-                        {alternative?.tradeoffs?.map((tradeoff, index) => (
-                          <li key={index} className="flex items-center space-x-1">
-                            <Icon name="AlertCircle" size={12} className="text-warning" />
-                            <span>{tradeoff}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                  <div className="text-right">
+                    <div className="text-sm line-through text-muted-foreground">${alt.originalPrice}</div>
+                    <div className="text-lg font-bold text-success">${alt.alternativePrice}</div>
+                    <div className="text-sm text-accent font-medium">Save ${alt.savings}</div>
                   </div>
                 </div>
 
-                <div className="flex-shrink-0">
-                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                    selectedAlternatives?.includes(alternative?.id)
-                      ? 'border-success bg-success' :'border-muted-foreground'
-                  }`}>
-                    {selectedAlternatives?.includes(alternative?.id) && (
-                      <Icon name="Check" size={12} className="text-white" />
-                    )}
+                {/* Includes & Tradeoffs */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                  <div>
+                    <div className="text-xs font-medium text-success mb-1">Includes:</div>
+                    <ul className="text-xs text-muted-foreground space-y-0.5">
+                      {alt.features.map((f, i) => (
+                        <li key={i} className="flex items-center space-x-1">
+                          <Icon name="Check" size={12} className="text-success" />
+                          <span>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
+                  <div>
+                    <div className="text-xs font-medium text-warning mb-1">Consider:</div>
+                    <ul className="text-xs text-muted-foreground space-y-0.5">
+                      {alt.tradeoffs.map((t, i) => (
+                        <li key={i} className="flex items-center space-x-1">
+                          <Icon name="AlertCircle" size={12} className="text-warning" />
+                          <span>{t}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* 🟢 Add to Trip Button */}
+                <div className="mt-4">
+                  <Button
+                    variant={addedTrips.includes(alt.tripId) ? "success" : "secondary"}
+                    size="sm"
+                    iconName={addedTrips.includes(alt.tripId) ? "Check" : "PlusCircle"}
+                    iconSize={14}
+                    disabled={loadingTripId === alt.tripId || addedTrips.includes(alt.tripId)}
+                    onClick={() => handleAddToTrip(alt.tripId)}
+                  >
+                    {loadingTripId === alt.tripId
+                      ? "Adding..."
+                      : addedTrips.includes(alt.tripId)
+                      ? "Added ✅"
+                      : "Add this to Trip"}
+                  </Button>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
-      {/* Action Section */}
-      {selectedAlternatives?.length > 0 && (
+
+      {/* Bottom Section */}
+      {selectedAlternatives.length > 0 && (
         <div className="mt-6 p-4 bg-success/5 border border-success/20 rounded-lg">
           <div className="flex items-center justify-between">
             <div>
@@ -245,15 +235,12 @@ const BudgetOptimizer = ({ recommendations, groupBudget = 2000, onOptimize }) =>
                 Total Savings: ${calculateSelectedSavings()}
               </div>
               <div className="text-sm text-muted-foreground">
-                {selectedAlternatives?.length} alternative{selectedAlternatives?.length > 1 ? 's' : ''} selected
+                {selectedAlternatives.length} alternative
+                {selectedAlternatives.length > 1 ? 's' : ''} selected
               </div>
             </div>
             <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedAlternatives([])}
-              >
+              <Button variant="outline" size="sm" onClick={() => setSelectedAlternatives([])}>
                 Clear
               </Button>
               <Button
