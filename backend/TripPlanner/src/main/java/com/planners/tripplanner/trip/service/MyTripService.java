@@ -4,6 +4,8 @@ import com.planners.tripplanner.trip.dto.MyTripDto;
 import com.planners.tripplanner.trip.model.Budget;
 import com.planners.tripplanner.trip.model.Milestone;
 import com.planners.tripplanner.trip.model.MyTrips;
+import com.planners.tripplanner.trip.repository.BudgetRepo;
+import com.planners.tripplanner.trip.repository.MilestoneRepo;
 import com.planners.tripplanner.trip.repository.MyTripsRepo;
 import com.planners.tripplanner.user.model.Users;
 import com.planners.tripplanner.user.repository.UserRepo;
@@ -25,6 +27,12 @@ public class MyTripService {
     @Autowired
     MyTripsRepo myTripsRepo;
 
+    @Autowired
+    MilestoneRepo milestoneRepo;
+
+    @Autowired
+    BudgetRepo budgetRepo;
+
     public MyTrips addMyTrip(MyTripDto myTripDto) {
         MyTrips myTrips = new MyTrips();
 
@@ -45,7 +53,15 @@ public class MyTripService {
         myTrips.setTripAdmin(admin);
 
 // Budget (if DTO has budget info)
-        myTrips.setBudget(myTripDto.getBudget());
+        Budget userBudget = myTripDto.getBudget();
+        Budget budget = new Budget();
+        budget.setTotal(userBudget.getTotal());
+        budget.setPercentage(0);
+        budget.setRemaining(userBudget.getTotal());
+        budget.setSpent(0);
+        Budget savedBudget = budgetRepo.save(budget);
+
+        myTrips.setBudget(savedBudget);
 
         // Adding initial mileStone
         Milestone milestone = new Milestone();
@@ -58,6 +74,7 @@ public class MyTripService {
         milestone.setActionable(false);
         milestone.setDueDate(new Date());
 
+
         // Admin added to member list initially
         List<Users> members = new ArrayList<>();
         members.add(admin);
@@ -65,7 +82,6 @@ public class MyTripService {
 
         myTrips.setActiveMembers(new ArrayList<>());
 
-        myTrips.setNextActions(new ArrayList<>());
 
         MyTrips mt = myTripsRepo.save(myTrips);
 

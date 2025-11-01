@@ -22,17 +22,19 @@ public class AllTrips {
         @NonNull
         private String title;
         @NonNull
+
+        private String destination;
         private String location;
         private String category;
         private String image;
         private double rating;
         private String duration;
-        private String priceRange;
-        private String groupSize;
-        private String distance;
-        private String aiReasoning;
+        private int priceRange;
         private String description;
         private List<String> tags;
-        private String socialProof;
         private boolean isSaved;
+        private String aiReasoning;
+
+        @DBRef
+        private List<Activity> activity = new ArrayList<>();
 }

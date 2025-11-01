@@ -42,7 +42,7 @@ public class TripInviteEmailService {
 
         // Generate token & invite link
         String token = jwtUtil.generateInvitationToken(toEmail, tripId);
-        String inviteLink = "http://localhost:3000/myTrip/verify-invite?token=" + token;
+        String inviteLink = "http://localhost:8080/myTrip/verify-invite?token=" + token;
 
         // Prepare email
         SimpleMailMessage message = new SimpleMailMessage();

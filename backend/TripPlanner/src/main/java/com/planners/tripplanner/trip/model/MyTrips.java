@@ -46,8 +46,8 @@ public class MyTrips {
     @JsonManagedReference
     private List<Users> activeMembers;
 
-    @DBRef(lazy = false)
-    private List<Activity> nextActions;
+    @DBRef
+    private List<Activity> activity = new ArrayList<>();
 
     @DBRef
     List<Milestone> milestones = new ArrayList<>();
