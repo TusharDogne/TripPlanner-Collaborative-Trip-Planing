@@ -361,7 +361,7 @@ const TripDashboard = () => {
                       iconName="Plus"
                       iconPosition="left"
                       iconSize={16}
-                      onClick={() => navigate('/collaborative-planner')}
+                      onClick={() => navigate('/smart-recommendations')}
                     >
                       New Trip
                     </Button>
