@@ -9,7 +9,7 @@ import BudgetCoordinator from "./pages/budget-coordinator";
 import CollaborativePlanner from "./pages/collaborative-planner";
 import CommunityGallery from "./pages/community-gallery";
 import Homepage from "./pages/homepage";
-import InviteFriend from "./pages/invite-friends/InviteFriend";
+
 
 
 
@@ -26,7 +26,7 @@ const Routes = () => {
           <Route path="/collaborative-planner" element={<CollaborativePlanner />} />
           <Route path="/community-gallery" element={<CommunityGallery />} />
           <Route path="/homepage" element={<Homepage />} />
-          <Route path="/invite-friend" element={<InviteFriend />} />
+       
           <Route path="*" element={<NotFound />} />
         </RouterRoutes>
       </ErrorBoundary>
