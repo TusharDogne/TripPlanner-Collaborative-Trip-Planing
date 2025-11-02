@@ -168,14 +168,48 @@ const RecommendationCard = ({
               Vote
             </Button>
             <Button
-              variant="ghost"
-              size="sm"
-              iconName="MessageCircle"
-              iconPosition="left"
-              iconSize={16}
-            >
-              Discuss
-            </Button>
+  variant="default"
+  size="sm"
+  onClick={async () => {
+    try {
+      // Trip ka id nikal lo (jo bhi field ka naam use ho raha ho)
+      const tripId = recommendation?.id || recommendation?.tripId;
+
+      if (!tripId) {
+        alert("⚠️ Trip ID not found!");
+        console.log("Trip object:", recommendation);
+        return;
+      }
+
+      console.log("Sending trip ID:", tripId);
+
+      const response = await fetch("http://localhost:8080/allTrips/addTripToMyTrips", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // agar auth token chahiye backend me to uncomment karo
+          // "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+        body: JSON.stringify({ tripId: tripId }), // sirf id bhejna
+      });
+
+      if (response.ok) {
+        alert(`✅ Trip "${recommendation?.title}" added successfully!`);
+      } else {
+        const text = await response.text();
+        console.error("Error response:", text);
+        alert("❌ Failed to add trip! Check backend logs or API.");
+      }
+    } catch (error) {
+      console.error("Network Error:", error);
+      alert("⚠️ Unable to connect to backend server!");
+    }
+  }}
+>
+  Add to My Trip
+</Button>
+
+
           </div>
           
           {voteCount > 0 && (
