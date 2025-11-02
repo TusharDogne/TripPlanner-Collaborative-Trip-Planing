@@ -188,7 +188,7 @@ const RecommendationCard = ({
         headers: {
           "Content-Type": "application/json",
           // agar auth token chahiye backend me to uncomment karo
-          // "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`,
+          "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`,
         },
         body: JSON.stringify({ tripId: tripId }), // sirf id bhejna
       });

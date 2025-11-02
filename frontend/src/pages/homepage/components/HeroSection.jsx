@@ -16,15 +16,14 @@ const HeroSection = () => {
 
   /**
    * Fetches place data from the local JSON file and filters suggestions.
-   * @param {string} query The search string.
    */
   const fetchPlaces = async (query) => {
     // Return early if no query
     if (!query.trim()) return setSuggestions([]);
-    
+
     try {
       // Use the confirmed file name: /places.json
-      const res = await fetch("/places.json"); 
+      const res = await fetch("/places.json");
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
       const data = await res.json();
@@ -37,7 +36,7 @@ const HeroSection = () => {
       setSuggestions(filtered.slice(0, 6)); // top 6 results
     } catch (err) {
       console.error("Error fetching places:", err);
-      setSuggestions([]); 
+      setSuggestions([]);
     }
   };
 
@@ -55,7 +54,6 @@ const HeroSection = () => {
 
   /**
    * Handles selecting a place from the suggestions dropdown.
-   * @param {object} place The selected place object.
    */
   const handleSelect = (place) => {
     setSearch(place.name);
@@ -64,40 +62,39 @@ const HeroSection = () => {
   };
 
   /**
-   * Handles the Explore button click.
+   * 🌟 UPDATED FUNCTION (Replaced with Code 2's logic)
+   * Handles the Explore button click, filtering data and navigating using URL query.
    */
   const handleExplore = async () => {
     try {
-      // Use the confirmed file name: /places.json
       const res = await fetch("/places.json");
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
-
-      if (search.trim()) {
-        const filtered = data.filter((p) =>
-          [p.name, p.city, p.state, ...(p.tags || [])]
-            .join(" ")
-            .toLowerCase()
-            .includes(search.toLowerCase())
-        );
-        // Store filtered results
-        localStorage.setItem("tripData", JSON.stringify(filtered));
-      } else {
-        // If search is empty, store all data
-        localStorage.setItem("tripData", JSON.stringify(data));
-      }
-
-      navigate("/discover"); // Navigate to Discover page
+      
+      const filtered = data.filter((p) =>
+        [p.name, p.city, p.state, ...(p.tags || [])]
+          .join(" ")
+          .toLowerCase()
+          .includes(search.toLowerCase())
+      );
+      
+      // Store filtered results (Code 2 also stored filtered data)
+      localStorage.setItem("tripData", JSON.stringify(filtered));
+      
+      // Navigate using URL Query Parameter (Code 2's key improvement)
+      navigate(`/discover?location=${encodeURIComponent(search)}`);
     } catch (err) {
       console.error("Error exploring:", err);
-      alert("Unable to load destinations 😢. Please check your network and 'places.json' file.");
+      // Removed the detailed alert from Code 1 to keep it cleaner, similar to Code 2's catch
+      alert("Error loading destinations. Please check network."); 
     }
   };
 
-  // Live counters + cursors simulation
+
+  // Live counters + cursors simulation (Unchanged from Code 1)
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveUsers((prev) => prev + Math.floor(Math.random() * 5) - 2); 
+      setActiveUsers((prev) => prev + Math.floor(Math.random() * 5) - 2);
       if (Math.random() > 0.7) setTripsToday((prev) => prev + 1);
     }, 3000);
 
@@ -106,7 +103,7 @@ const HeroSection = () => {
         id: i,
         x: Math.random() * 80 + 10,
         y: Math.random() * 60 + 20,
-        user: ["Sarah", "Mike", "Emma"][i],
+        user: ["Vaidehi", "Tushar", "Yash"][i],
         color: ["#FF6B6B", "#4ECDC4", "#FFE66D"][i],
       }));
       setCollaborativeCursors(newCursors);
@@ -136,7 +133,7 @@ const HeroSection = () => {
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-6 pt-24 pb-16">
         <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
-          {/* Left Column */}
+          {/* Left Column (UI UNCHANGED) */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -274,14 +271,14 @@ const HeroSection = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Column (Trip Mockup & Stats) */}
+          {/* Right Column (Trip Mockup & Cursors - UI UNCHANGED) */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
             className="relative"
           >
-            {/* Collaborative Mockup */}
+            {/* Collaborative Mockup (Unchanged) */}
             <div className="relative bg-card border border-border rounded-2xl p-6 shadow-collaborative">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-semibold text-foreground">
