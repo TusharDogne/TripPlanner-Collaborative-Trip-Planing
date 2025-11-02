@@ -2,9 +2,11 @@ package com.planners.tripplanner.allTrips.service;
 
 import com.planners.tripplanner.allTrips.Repository.AllTripsRepo;
 import com.planners.tripplanner.allTrips.model.AllTrips;
+import com.planners.tripplanner.trip.model.Activity;
 import com.planners.tripplanner.trip.model.Budget;
 import com.planners.tripplanner.trip.model.Milestone;
 import com.planners.tripplanner.trip.model.MyTrips;
+import com.planners.tripplanner.trip.repository.ActivityRepo;
 import com.planners.tripplanner.trip.repository.BudgetRepo;
 import com.planners.tripplanner.trip.repository.MilestoneRepo;
 import com.planners.tripplanner.trip.repository.MyTripsRepo;
@@ -37,11 +39,18 @@ public class AllTripsService {
     @Autowired
     MyTripsRepo myTripsRepo;
 
+    @Autowired
+    ActivityRepo activityRepo;
+
     public List<AllTrips> getAllTrips() {
         return allTripsRepo.findAll();
     }
 
     public AllTrips addTripToAllTrips(AllTrips allTrips) {
+        List<Activity> activities = allTrips.getActivity();
+        for (Activity activity : activities) {
+            activityRepo.save(activity);
+        }
         return allTripsRepo.save(allTrips);
     }
 

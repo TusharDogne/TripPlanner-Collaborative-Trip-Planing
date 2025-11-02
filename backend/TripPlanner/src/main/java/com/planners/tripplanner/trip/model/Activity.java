@@ -13,7 +13,7 @@ import java.util.List;
 @Document
 public class Activity {
 
-    private int id;
+    private String id;
     private String name;
     private String description;
     private String image;
