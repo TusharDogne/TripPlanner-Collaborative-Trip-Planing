@@ -40,9 +40,9 @@ const TripDashboard = () => {
       console.log("Fetched trips:", tripData);
 
       setActiveTrips(tripData);
-      setSelectedTripId(tripData && tripData.length > 0 ? tripData[0].id : null);
-      setBudgetData(tripData[0].budget);
-      setMilestones(tripData[0].milestones);
+      setSelectedTripId(tripData && tripData.length > 0 ? tripData[tripData.length-1].id : null);
+      setBudgetData(tripData[tripData.length-1].budget);
+      setMilestones(tripData[tripData.length-1].milestones);
     } catch (error) {
       console.error("Error fetching trips:", error);
       setActiveTrips([]); // prevent crash
