@@ -2,14 +2,8 @@ package com.planners.tripplanner.allTrips.service;
 
 import com.planners.tripplanner.allTrips.Repository.AllTripsRepo;
 import com.planners.tripplanner.allTrips.model.AllTrips;
-import com.planners.tripplanner.trip.model.Activity;
-import com.planners.tripplanner.trip.model.Budget;
-import com.planners.tripplanner.trip.model.Milestone;
-import com.planners.tripplanner.trip.model.MyTrips;
-import com.planners.tripplanner.trip.repository.ActivityRepo;
-import com.planners.tripplanner.trip.repository.BudgetRepo;
-import com.planners.tripplanner.trip.repository.MilestoneRepo;
-import com.planners.tripplanner.trip.repository.MyTripsRepo;
+import com.planners.tripplanner.trip.model.*;
+import com.planners.tripplanner.trip.repository.*;
 import com.planners.tripplanner.user.model.Users;
 import com.planners.tripplanner.user.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +36,9 @@ public class AllTripsService {
 
     @Autowired
     ActivityRepo activityRepo;
+
+    @Autowired
+    MyTripActivityRepo myTripActivityRepo;
 
     public List<AllTrips> getAllTrips() {
         return allTripsRepo.findAll();
@@ -97,7 +95,20 @@ public class AllTripsService {
 
         myTrip.getMilestones().add(milestoneRepo.save(milestone));
 
-        myTrip.setActivity(trip.getActivity());
+        List<MyTripActivity> myTripActivities = new ArrayList<>();
+        List<Activity> activities = trip.getActivity();
+        for (Activity activity : activities) {
+            MyTripActivity myTripActivity = new MyTripActivity();
+            myTripActivity.setName(activity.getName());
+            myTripActivity.setDescription(activity.getDescription());
+            myTripActivity.setTags(activity.getTags());
+            myTripActivity.setImage(activity.getImage());
+            myTripActivity.setRating(activity.getRating());
+            myTripActivity.setEstimatedCost(activity.getEstimatedCost());
+            myTripActivities.add(myTripActivityRepo.save(myTripActivity));
+        }
+
+        myTrip.setActivity(myTripActivities);
 
         MyTrips savedMyTrip = myTripsRepo.save(myTrip);
 

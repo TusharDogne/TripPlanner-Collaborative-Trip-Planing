@@ -2,6 +2,7 @@ package com.planners.tripplanner.trip.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.planners.tripplanner.chat.model.Message;
 import com.planners.tripplanner.user.model.Users;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,6 +39,8 @@ public class MyTrips {
     private String image;
     private Budget budget;
 
+    List<Message> messages = new ArrayList<>();
+
     @DBRef(lazy = false)
     @JsonManagedReference
     private List<Users> members =  new ArrayList<>();
@@ -47,7 +50,7 @@ public class MyTrips {
     private List<Users> activeMembers;
 
     @DBRef
-    private List<Activity> activity = new ArrayList<>();
+    private List<MyTripActivity> activity = new ArrayList<>();
 
     @DBRef
     List<Milestone> milestones = new ArrayList<>();
