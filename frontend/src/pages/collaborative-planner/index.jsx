@@ -47,6 +47,7 @@ const CollaborativePlanner = () => {
       .then(data => {
         console.log("Fetched trip details:", data);
         setActiveTrip(data);
+        setSuggestions(data.activity);
       })
       .catch(err => console.error("❌ Error fetching trip:", err));
   }, [tripId, navigate]);
@@ -61,42 +62,42 @@ const CollaborativePlanner = () => {
 
   // Initialize mock suggestions
   useEffect(() => {
-    setSuggestions([
-      {
-        id: 1,
-        name: "Times Square",
-        description: `The bustling heart of NYC with bright lights and endless entertainment.\nPerfect for first-time visitors and group photos.`,
-        image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400",
-        rating: 4.2,
-        estimatedCost: 0,
-        budgetImpact: 'low',
-        tags: ['Iconic', 'Free', 'Photography', 'Tourist'],
-        addedBy: { id: 1, name: "Sarah Chen", avatar: "https://randomuser.me/api/portraits/women/1.jpg" },
-        reactions: { love: 3, like: 2, excited: 4, maybe: 1, dislike: 0 },
-        comments: [
-          { id: 1, user: { id: 2, name: "Mike Rodriguez", avatar: "https://randomuser.me/api/portraits/men/2.jpg" }, content: "Great for photos but might be too crowded", timestamp: new Date(Date.now() - 3600000) }
-        ],
-        consensusLevel: 75,
-        timestamp: new Date(Date.now() - 7200000)
-      },
-      {
-        id: 2,
-        name: "Brooklyn Bridge",
-        description: `Historic bridge offering stunning views of Manhattan skyline.\nBest experienced during sunrise or sunset for magical lighting.`,
-        image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400",
-        rating: 4.8,
-        estimatedCost: 0,
-        budgetImpact: 'low',
-        tags: ['Historic', 'Free', 'Views', 'Walking'],
-        addedBy: { id: 2, name: "Mike Rodriguez", avatar: "https://randomuser.me/api/portraits/men/2.jpg" },
-        reactions: { love: 5, like: 3, excited: 2, maybe: 0, dislike: 0 },
-        comments: [
-          { id: 2, user: { id: 1, name: "Sarah Chen", avatar: "https://randomuser.me/api/portraits/women/1.jpg" }, content: "Perfect for sunrise photos! Let's plan for early morning.", timestamp: new Date(Date.now() - 1800000) }
-        ],
-        consensusLevel: 90,
-        timestamp: new Date(Date.now() - 5400000)
-      }
-    ]);
+    // setSuggestions([
+    //   {
+    //     id: 1,
+    //     name: "Times Square",
+    //     description: `The bustling heart of NYC with bright lights and endless entertainment.\nPerfect for first-time visitors and group photos.`,
+    //     image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400",
+    //     rating: 4.2,
+    //     estimatedCost: 0,
+    //     budgetImpact: 'low',
+    //     tags: ['Iconic', 'Free', 'Photography', 'Tourist'],
+    //     addedBy: { id: 1, name: "Sarah Chen", avatar: "https://randomuser.me/api/portraits/women/1.jpg" },
+    //     reactions: { love: 3, like: 2, excited: 4, maybe: 1, dislike: 0 },
+    //     comments: [
+    //       { id: 1, user: { id: 2, name: "Mike Rodriguez", avatar: "https://randomuser.me/api/portraits/men/2.jpg" }, content: "Great for photos but might be too crowded", timestamp: new Date(Date.now() - 3600000) }
+    //     ],
+    //     consensusLevel: 75,
+    //     timestamp: new Date(Date.now() - 7200000)
+    //   },
+    //   {
+    //     id: 2,
+    //     name: "Brooklyn Bridge",
+    //     description: `Historic bridge offering stunning views of Manhattan skyline.\nBest experienced during sunrise or sunset for magical lighting.`,
+    //     image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400",
+    //     rating: 4.8,
+    //     estimatedCost: 0,
+    //     budgetImpact: 'low',
+    //     tags: ['Historic', 'Free', 'Views', 'Walking'],
+    //     addedBy: { id: 2, name: "Mike Rodriguez", avatar: "https://randomuser.me/api/portraits/men/2.jpg" },
+    //     reactions: { love: 5, like: 3, excited: 2, maybe: 0, dislike: 0 },
+    //     comments: [
+    //       { id: 2, user: { id: 1, name: "Sarah Chen", avatar: "https://randomuser.me/api/portraits/women/1.jpg" }, content: "Perfect for sunrise photos! Let's plan for early morning.", timestamp: new Date(Date.now() - 1800000) }
+    //     ],
+    //     consensusLevel: 90,
+    //     timestamp: new Date(Date.now() - 5400000)
+    //   }
+    // ]);
   }, []);
 
   // Calculate overall consensus
