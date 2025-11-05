@@ -190,7 +190,7 @@ const RecommendationCard = ({
           // agar auth token chahiye backend me to uncomment karo
           "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`,
         },
-        body: JSON.stringify({ tripId: tripId }), // sirf id bhejna
+        body: JSON.stringify({ id: tripId }), // sirf id bhejna
       });
 
       if (response.ok) {

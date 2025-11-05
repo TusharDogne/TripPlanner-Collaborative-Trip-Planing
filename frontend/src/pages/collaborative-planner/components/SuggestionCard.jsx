@@ -47,21 +47,6 @@ const SuggestionCard = ({ suggestion, onVote, onComment, isSelected, onSelect })
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center space-x-3">
-          <Image
-            src={suggestion?.addedBy?.avatar}
-            alt={suggestion?.addedBy?.name}
-            className="w-8 h-8 rounded-full object-cover"
-          />
-          <div>
-            <h3 className="font-poppins font-semibold text-foreground">
-              {suggestion?.name}
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Added by {suggestion?.addedBy?.name}
-            </p>
-          </div>
-        </div>
         <div className="flex items-center space-x-2">
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getBudgetColor(suggestion?.budgetImpact)}`}>
             {suggestion?.budgetImpact} cost
@@ -74,6 +59,7 @@ const SuggestionCard = ({ suggestion, onVote, onComment, isSelected, onSelect })
           </div>
         </div>
       </div>
+
       {/* Image */}
       <div className="relative mb-3 overflow-hidden rounded-lg">
         <Image
@@ -87,13 +73,15 @@ const SuggestionCard = ({ suggestion, onVote, onComment, isSelected, onSelect })
           </span>
         </div>
       </div>
+
       {/* Description */}
       <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
         {suggestion?.description}
       </p>
+
       {/* Tags */}
       <div className="flex flex-wrap gap-1 mb-3">
-        {suggestion?.tags?.map((tag, index) => (
+        {(suggestion?.tags || [])?.map((tag, index) => (
           <span
             key={index}
             className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full"
@@ -102,15 +90,16 @@ const SuggestionCard = ({ suggestion, onVote, onComment, isSelected, onSelect })
           </span>
         ))}
       </div>
+
       {/* Voting Section */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-1">
-          {Object.entries(suggestion?.reactions)?.map(([type, count]) => (
+          {Object.entries(suggestion?.reactions || {})?.map(([type, count]) => (
             count > 0 && (
               <button
                 key={type}
                 onClick={(e) => {
-                  e?.stopPropagation();
+                  e.stopPropagation();
                   handleVote(type);
                 }}
                 className="flex items-center space-x-1 px-2 py-1 bg-muted hover:bg-muted/80 rounded-full transition-organic vote-bounce"
@@ -129,20 +118,21 @@ const SuggestionCard = ({ suggestion, onVote, onComment, isSelected, onSelect })
           iconName="MessageCircle"
           iconSize={14}
           onClick={(e) => {
-            e?.stopPropagation();
+            e.stopPropagation();
             setShowComments(!showComments);
           }}
         >
-          {suggestion?.comments?.length}
+          {suggestion?.comments?.length || 0}
         </Button>
       </div>
+
       {/* Quick Vote Buttons */}
       <div className="flex items-center space-x-2 mb-3">
         {['love', 'like', 'excited', 'maybe']?.map((type) => (
           <button
             key={type}
             onClick={(e) => {
-              e?.stopPropagation();
+              e.stopPropagation();
               handleVote(type);
             }}
             className="flex-1 py-2 bg-muted hover:bg-muted/80 rounded-lg transition-organic text-center vote-bounce"
@@ -151,10 +141,11 @@ const SuggestionCard = ({ suggestion, onVote, onComment, isSelected, onSelect })
           </button>
         ))}
       </div>
+
       {/* Comments Section */}
       {showComments && (
         <div className="border-t border-border pt-3 space-y-3">
-          {suggestion?.comments?.map((comment) => (
+          {(suggestion?.comments || [])?.map((comment) => (
             <div key={comment?.id} className="flex space-x-2">
               <Image
                 src={comment?.user?.avatar}
@@ -171,12 +162,12 @@ const SuggestionCard = ({ suggestion, onVote, onComment, isSelected, onSelect })
                   </p>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {comment?.timestamp?.toLocaleTimeString()}
+                  {comment?.timestamp?.toLocaleTimeString?.() || ''}
                 </p>
               </div>
             </div>
           ))}
-          
+
           {/* Add Comment */}
           <div className="flex space-x-2">
             <input
@@ -196,15 +187,6 @@ const SuggestionCard = ({ suggestion, onVote, onComment, isSelected, onSelect })
               disabled={!newComment?.trim()}
             />
           </div>
-        </div>
-      )}
-      {/* Consensus Indicator */}
-      {suggestion?.consensusLevel > 70 && (
-        <div className="mt-3 flex items-center space-x-2 px-3 py-2 bg-success/10 border border-success/20 rounded-lg">
-          <Icon name="CheckCircle" size={16} className="text-success" />
-          <span className="text-sm font-medium text-success">
-            Group consensus reached! ({suggestion?.consensusLevel}%)
-          </span>
         </div>
       )}
     </div>

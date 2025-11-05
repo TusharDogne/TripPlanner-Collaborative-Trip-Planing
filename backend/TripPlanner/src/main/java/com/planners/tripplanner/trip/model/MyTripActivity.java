@@ -1,17 +1,16 @@
 package com.planners.tripplanner.trip.model;
 
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
+
 @Data
 @NoArgsConstructor
 @Document
-public class Activity {
+public class MyTripActivity {
 
     private String id;
     private String name;
@@ -21,4 +20,6 @@ public class Activity {
     private double estimatedCost;
     private String budgetImpact;
     private List<String> tags;
+    private List<String> comments;
+
 }

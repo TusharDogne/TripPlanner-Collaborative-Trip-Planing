@@ -2,6 +2,7 @@ package com.planners.tripplanner.allTrips.controller;
 
 
 import com.planners.tripplanner.allTrips.Repository.AllTripsRepo;
+import com.planners.tripplanner.allTrips.dto.IdRequest;
 import com.planners.tripplanner.allTrips.model.AllTrips;
 import com.planners.tripplanner.allTrips.service.AllTripsService;
 import com.planners.tripplanner.trip.model.MyTrips;
@@ -31,9 +32,9 @@ public class AllTripsController {
         return ResponseEntity.ok(allTrips);
     }
 
-    @GetMapping("/addTripToMyTrips")
-    public ResponseEntity<?> addTripToMyTrips(@RequestBody String id) {
-        AllTrips trip = allTripsRepo.findAllTripsById(id);
+    @PostMapping("/addTripToMyTrips")
+    public ResponseEntity<?> addTripToMyTrips(@RequestBody IdRequest request) {
+        AllTrips trip = allTripsRepo.findById(request.getId()).orElse(null);
         MyTrips myTrip = allTripsService.addTripToMyTrip(trip);
 
         if(myTrip != null) {
