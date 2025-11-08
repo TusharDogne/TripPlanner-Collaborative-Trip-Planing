@@ -10,6 +10,8 @@ import HiddenGemsSection from './components/HiddenGemsSection';
 import BudgetOptimizer from './components/BudgetOptimizer';
 import SwipeDiscovery from './components/SwipeDiscovery';
 
+
+
 const SmartRecommendations = () => {
   const [viewMode, setViewMode] = useState('grid');
   const [filters, setFilters] = useState({
