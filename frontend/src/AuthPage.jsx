@@ -33,6 +33,7 @@ export default function AuthPage() {
       // 🟩 assuming backend sends { token: "..." }
       if (response.data.token) {
         localStorage.setItem("jwtToken", response.data.token);
+        localStorage.setItem("username", formData.fullName);
         alert("Login Successful ✅");
         navigate("/homepage");
       } else {
@@ -114,7 +115,7 @@ export default function AuthPage() {
                   <input
                     type="text"
                     name="fullName"
-                    placeholder="Full Name"
+                    placeholder="User Name"
                     value={formData.fullName}
                     onChange={handleChange}
                     className="w-full p-3 focus:outline-none"
@@ -166,7 +167,7 @@ export default function AuthPage() {
                   <input
                     type="text"
                     name="fullName"
-                    placeholder="Full Name"
+                    placeholder="User Name"
                     value={formData.fullName}
                     onChange={handleChange}
                     className="w-full p-3 focus:outline-none"

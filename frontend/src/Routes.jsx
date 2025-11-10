@@ -10,6 +10,7 @@ import CollaborativePlanner from "./pages/collaborative-planner";
 import CommunityGallery from "./pages/community-gallery";
 import Homepage from "./pages/homepage";
 
+window.global = window;
 
 
 
