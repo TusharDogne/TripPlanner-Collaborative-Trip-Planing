@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -109,6 +110,25 @@ public class AllTripsService {
         }
 
         myTrip.setActivity(myTripActivities);
+
+        String duration = trip.getDuration();
+
+        // Extract the number (handles any number of digits)
+        int days = 0;
+        if (duration != null && !duration.isEmpty()) {
+            java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("\\d+").matcher(duration);
+            if (matcher.find()) {
+                days = Integer.parseInt(matcher.group());
+            }
+        }
+
+        System.out.println("Trip duration in days = " + days);
+
+
+        LocalDate startDate = LocalDate.now(); // or trip.getStartDate()
+        LocalDate endDate = startDate.plusDays(days);
+        myTrip.setEndDate(endDate);
+
 
         MyTrips savedMyTrip = myTripsRepo.save(myTrip);
 

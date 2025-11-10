@@ -35,6 +35,7 @@ public class UserSecurityConfig {
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/myTrip/verify-invite").permitAll()
                         .requestMatchers("/health-check").permitAll()
+                        .requestMatchers("/chat/**", "/app/**").permitAll() // ✅ allow websocket handshake
                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->

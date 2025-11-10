@@ -1,10 +1,15 @@
 package com.planners.tripplanner.chat.config;
 
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+
+@Configuration
+@EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
@@ -12,6 +17,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // WebSocket endpoint (for frontend connection)
         registry.addEndpoint("/chat")
                 .setAllowedOriginPatterns("*")
+                .addInterceptors(new AuthHandshakeInterceptor())
                 .withSockJS();
     }
 

@@ -15,6 +15,7 @@ public class Message {
 
     @Id
     private String id;
+    private String tripId;
     private String content;
     private String sender;
     private LocalDateTime timestamp;

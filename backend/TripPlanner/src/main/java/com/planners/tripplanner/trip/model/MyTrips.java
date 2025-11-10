@@ -11,6 +11,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class MyTrips {
     private String destination;
     private String category;
     private String dates;
+    private LocalDate endDate;
     private int memberCount;
     private String status;
     private boolean isNew;
@@ -54,4 +56,6 @@ public class MyTrips {
 
     @DBRef
     List<Milestone> milestones = new ArrayList<>();
+
+    private boolean isActive;
 }

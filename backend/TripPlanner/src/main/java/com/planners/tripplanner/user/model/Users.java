@@ -24,6 +24,8 @@ public class Users {
     @NonNull
     private String userName;
 
+    private String image;
+
     @NonNull
     private String userImage;
 
