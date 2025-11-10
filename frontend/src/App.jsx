@@ -1,7 +1,7 @@
 // src/App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AuthPage from "./AuthPage";
+import AuthPage from "./components/ui/AuthPage.jsx";
 import Homepage from "./pages/homepage/index";
 import Dashboard from "./pages/trip-dashboard/index";
 import CollaborativePlanner from "./pages/collaborative-planner/index";
@@ -17,12 +17,9 @@ export default function App() {
     <Router>
       <ScrollToTop />
       <Routes>
-        {/* Login / Signup Page */}
-        <Route path="/" element={<AuthPage />} />
-
-        {/* Main Pages with Header */}
+        {/* ✅ Default Homepage route */}
         <Route
-          path="/homepage"
+          path="/"
           element={
             <>
               <Header />
@@ -30,12 +27,17 @@ export default function App() {
             </>
           }
         />
+
+        {/* 🔹 Signup / Login Page (accessible separately) */}
+        <Route path="/auth" element={<AuthPage />} />
+
+        {/* 🔹 Other Pages */}
         <Route
           path="/trip-dashboard"
           element={
             <>
               <Header />
-              <Dashboard /> {/* ✅ Fixed uppercase */}
+              <Dashboard />
             </>
           }
         />
@@ -44,7 +46,7 @@ export default function App() {
           element={
             <>
               <Header />
-              <Discover /> {/* ✅ Now properly imported */}
+              <Discover />
             </>
           }
         />
