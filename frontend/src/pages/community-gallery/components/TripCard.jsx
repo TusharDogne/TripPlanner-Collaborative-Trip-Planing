@@ -14,13 +14,13 @@ const TripCard = ({ trip, onViewDetails }) => {
   };
 
   const formatBudget = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })?.format(amount);
+    }).format(amount);
   };
+
 
   return (
     <div 
