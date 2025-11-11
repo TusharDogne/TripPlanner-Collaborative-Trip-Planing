@@ -9,6 +9,7 @@ import BudgetCoordinator from "./pages/budget-coordinator";
 import CollaborativePlanner from "./pages/collaborative-planner";
 import CommunityGallery from "./pages/community-gallery";
 import Homepage from "./pages/homepage";
+import AuthPage from "./components/ui/AuthPage.jsx";
 
 window.global = window;
 
@@ -20,6 +21,7 @@ const Routes = () => {
       <ErrorBoundary>
         <ScrollToTop />
         <RouterRoutes>
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="/" element={<BudgetCoordinator />} />
           <Route path="/trip-dashboard" element={<TripDashboard />} />
           <Route path="/smart-recommendations" element={<SmartRecommendations />} />
