@@ -5,6 +5,7 @@ import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
 
+
 let stompClient = null;
 
 const TripCard = ({ trip, onViewDetails, onQuickAction }) => {
