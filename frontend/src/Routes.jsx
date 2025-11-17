@@ -10,8 +10,9 @@ import CollaborativePlanner from "./pages/collaborative-planner";
 import CommunityGallery from "./pages/community-gallery";
 import Homepage from "./pages/homepage";
 import AuthPage from "./components/ui/AuthPage.jsx";
-
+import TripDetails from "./pages/trip-details/TripDetails";
 window.global = window;
+
 
 
 
@@ -29,7 +30,8 @@ const Routes = () => {
           <Route path="/collaborative-planner" element={<CollaborativePlanner />} />
           <Route path="/community-gallery" element={<CommunityGallery />} />
           <Route path="/homepage" element={<Homepage />} />
-       
+          <Route path="/trip/:tripId" element={<TripDetails />} />
+
           <Route path="*" element={<NotFound />} />
         </RouterRoutes>
       </ErrorBoundary>

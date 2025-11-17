@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AuthPage from "./components/ui/AuthPage.jsx";
@@ -11,7 +10,7 @@ import NotFound from "./pages/NotFound";
 import Header from "./components/ui/Header";
 import ScrollToTop from "./components/ScrollToTop";
 import Discover from "./pages/smart-recommendations/index"; // ✅ Added this import
-
+import TripDetailsForPopup from "./pages/trip-dashboard/components/TripDetailsForPopup.jsx";
 export default function App() {
   return (
     <Router>
@@ -27,6 +26,7 @@ export default function App() {
             </>
           }
         />
+        <Route path="/trip/:tripId/details" element={<TripDetailsForPopup />} />
 
         {/* 🔹 Signup / Login Page (accessible separately) */}
         <Route path="/auth" element={<AuthPage />} />

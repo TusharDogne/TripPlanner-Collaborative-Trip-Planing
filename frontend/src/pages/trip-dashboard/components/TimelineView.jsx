@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
+import { useNavigate } from 'react-router-dom';
+import TripDetailsForPopup from './TripDetailsForPopup'; // ✅ Updated
 
-const TimelineView = ({ milestones, onMilestoneAction }) => {
+const TimelineView = ({ milestones = [], onMilestoneAction, tripId }) => {
+  const navigate = useNavigate();
+
   const [celebratingMilestone, setCelebratingMilestone] = useState(null);
   const [completedMilestones, setCompletedMilestones] = useState(new Set());
   const [showAddPopup, setShowAddPopup] = useState(false);
+  const [showBoostPopup, setShowBoostPopup] = useState(false);
+
   const [newMilestone, setNewMilestone] = useState({
     type: '',
     title: '',
@@ -15,20 +21,24 @@ const TimelineView = ({ milestones, onMilestoneAction }) => {
     actionLabel: '',
   });
 
+  const sortedMilestones = [...milestones].sort((a, b) => (a?.orderNumber || 0) - (b?.orderNumber || 0));
+
   useEffect(() => {
-    milestones?.forEach(milestone => {
-      if (milestone?.completed && !completedMilestones?.has(milestone?.id)) {
-        setCelebratingMilestone(milestone?.id);
+    sortedMilestones.forEach(milestone => {
+      if (milestone?.completed && !completedMilestones.has(milestone.id)) {
+        setCelebratingMilestone(milestone.id);
         setCompletedMilestones(prev => new Set([...prev, milestone.id]));
         setTimeout(() => setCelebratingMilestone(null), 2000);
       }
     });
-  }, [milestones, completedMilestones]);
+  }, [sortedMilestones, completedMilestones]);
 
   const handleAddMilestone = () => {
-    console.log('New Milestone:', newMilestone);
+    console.log('New Milestone Created:', newMilestone);
     setShowAddPopup(false);
   };
+
+  const handleBoostProgress = () => setShowBoostPopup(true);
 
   const getMilestoneIcon = (type) => {
     const iconMap = {
@@ -41,35 +51,33 @@ const TimelineView = ({ milestones, onMilestoneAction }) => {
       packing_started: 'Package',
       departure: 'MapPin',
     };
-    return iconMap?.[type] || 'CheckCircle';
+    return iconMap[type] || 'CheckCircle';
   };
 
-  const getMilestoneColor = (milestone) => {
-    if (milestone?.completed) return 'text-success border-success bg-success/10';
-    if (milestone?.current) return 'text-primary border-primary bg-primary/10';
+  const getMilestoneColor = (m) => {
+    if (m.completed) return 'text-success border-success bg-success/10';
+    if (m.current) return 'text-primary border-primary bg-primary/10';
     return 'text-muted-foreground border-muted bg-muted/10';
   };
 
-  const getConnectorColor = (milestone, nextMilestone) => {
-    if (milestone?.completed && nextMilestone?.completed) return 'bg-success';
-    if (milestone?.completed) return 'bg-gradient-to-b from-success to-muted';
+  const getConnectorColor = (m1, m2) => {
+    if (m1.completed && m2.completed) return 'bg-success';
+    if (m1.completed) return 'bg-gradient-to-b from-success to-muted';
     return 'bg-muted';
   };
 
-  const formatDate = (date) => {
-    if (!date) return '';
-    return new Date(date)?.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
+  const formatDate = (date) => date ? new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
 
   return (
     <div className="bg-card border border-border rounded-xl p-6 shadow-soft relative">
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-poppins font-bold text-lg text-foreground">Planning Timeline</h3>
         <div className="flex items-center space-x-2">
           <div className="flex items-center space-x-1 text-sm text-muted-foreground">
             <Icon name="Clock" size={14} />
-            <span>{milestones?.filter(m => m?.completed)?.length}/{milestones?.length} completed</span>
+            <span>{sortedMilestones.filter(m => m.completed).length}/{sortedMilestones.length} completed</span>
           </div>
           <Button variant="ghost" size="sm" iconName="MoreHorizontal" iconSize={16} />
         </div>
@@ -77,16 +85,16 @@ const TimelineView = ({ milestones, onMilestoneAction }) => {
 
       {/* Timeline */}
       <div className="relative">
-        {milestones?.map((milestone, index) => {
-          const nextMilestone = milestones?.[index + 1];
-          const isCelebrating = celebratingMilestone === milestone?.id;
+        {sortedMilestones.map((milestone, index) => {
+          const nextMilestone = sortedMilestones[index + 1];
+          const isCelebrating = celebratingMilestone === milestone.id;
 
           return (
-            <div key={milestone?.id} className="relative">
+            <div key={milestone.id} className="relative">
               <div className="flex items-start space-x-4 pb-6">
                 <div className="relative flex-shrink-0">
-                  <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${getMilestoneColor(milestone)} ${isCelebrating ? 'celebration-particles scale-110' : ''}`}>
-                    <Icon name={getMilestoneIcon(milestone?.type)} size={18} className={isCelebrating ? 'animate-bounce' : ''} />
+                  <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${getMilestoneColor(milestone)} ${isCelebrating ? 'scale-110 animate-bounce' : ''}`}>
+                    <Icon name={getMilestoneIcon(milestone.type)} size={18} />
                   </div>
                   {isCelebrating && <div className="absolute inset-0 rounded-full bg-success/20 animate-ping"></div>}
                 </div>
@@ -94,40 +102,43 @@ const TimelineView = ({ milestones, onMilestoneAction }) => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className={`font-medium ${milestone?.completed ? 'text-success' : milestone?.current ? 'text-primary' : 'text-foreground'}`}>{milestone?.title}</h4>
-                      <p className="text-sm text-muted-foreground mt-1">{milestone?.description}</p>
+                      <h4 className={`font-medium ${milestone.completed ? 'text-success' : milestone.current ? 'text-primary' : 'text-foreground'}`}>
+                        {milestone.title}
+                      </h4>
+                      <p className="text-sm text-muted-foreground mt-1">{milestone.description}</p>
                     </div>
-                    <div className="flex items-center space-x-2 ml-4">
-                      {milestone?.dueDate && <span className="text-xs text-muted-foreground whitespace-nowrap">{formatDate(milestone?.dueDate)}</span>}
-                    </div>
+                    <div>{milestone.dueDate && <span className="text-xs text-muted-foreground whitespace-nowrap">{formatDate(milestone.dueDate)}</span>}</div>
                   </div>
                 </div>
               </div>
-              {nextMilestone && <div className="absolute left-5 top-10 w-0.5 h-6 -translate-x-0.5"><div className={`w-full h-full transition-all duration-500 ${getConnectorColor(milestone, nextMilestone)}`}></div></div>}
+
+              {nextMilestone && (
+                <div className="absolute left-5 top-10 w-0.5 h-6 -translate-x-0.5">
+                  <div className={`w-full h-full transition-all duration-500 ${getConnectorColor(milestone, nextMilestone)}`}></div>
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-6 pt-4 border-t border-border">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Keep the momentum going!</span>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" iconName="Plus" onClick={() => setShowAddPopup(true)}>
-              Add Milestone
-            </Button>
-            <Button variant="default" size="sm" iconName="Zap">
-              Boost Progress
-            </Button>
-          </div>
+      <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
+        <span className="text-sm text-muted-foreground">Keep the momentum going!</span>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" size="sm" iconName="Plus" onClick={() => setShowAddPopup(true)}>Add Milestone</Button>
+          <Button variant="default" size="sm" iconName="Zap" onClick={handleBoostProgress}>Boost Progress</Button>
         </div>
       </div>
 
-      {/* Popup Modal for Adding Milestone */}
+      {showBoostPopup && (
+  <TripDetailsForPopup tripId={tripId} onClose={() => setShowBoostPopup(false)} />
+)}
+
+      {/* Add Milestone Popup */}
       {showAddPopup && (
-        <div className="absolute inset-0 bg-black/40 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-[400px]">
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-[400px] max-w-[90%]">
             <h3 className="text-lg font-semibold mb-4 text-gray-800">Add New Milestone</h3>
 
             {/* Type */}
@@ -149,53 +160,23 @@ const TimelineView = ({ milestones, onMilestoneAction }) => {
 
             {/* Title */}
             <label className="block text-sm text-gray-600 mb-1">Title</label>
-            <input
-              type="text"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3"
-              placeholder="Enter title"
-              value={newMilestone.title}
-              onChange={(e) => setNewMilestone({ ...newMilestone, title: e.target.value })}
-            />
+            <input type="text" className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3" placeholder="Enter title" value={newMilestone.title} onChange={(e) => setNewMilestone({ ...newMilestone, title: e.target.value })} />
 
             {/* Description */}
             <label className="block text-sm text-gray-600 mb-1">Description</label>
-            <textarea
-              className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3"
-              rows="3"
-              placeholder="Enter description"
-              value={newMilestone.description}
-              onChange={(e) => setNewMilestone({ ...newMilestone, description: e.target.value })}
-            ></textarea>
+            <textarea className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3" rows="3" placeholder="Enter description" value={newMilestone.description} onChange={(e) => setNewMilestone({ ...newMilestone, description: e.target.value })}></textarea>
 
             {/* Action Label */}
             <label className="block text-sm text-gray-600 mb-1">Action Label</label>
-            <input
-              type="text"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3"
-              placeholder="Enter action label (e.g. Continue, Update)"
-              value={newMilestone.actionLabel}
-              onChange={(e) => setNewMilestone({ ...newMilestone, actionLabel: e.target.value })}
-            />
+            <input type="text" className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3" placeholder="Enter action label" value={newMilestone.actionLabel} onChange={(e) => setNewMilestone({ ...newMilestone, actionLabel: e.target.value })} />
 
-            {/* Start Date */}
+            {/* Dates */}
             <label className="block text-sm text-gray-600 mb-1">Start Date</label>
-            <input
-              type="date"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3"
-              value={newMilestone.startDate}
-              onChange={(e) => setNewMilestone({ ...newMilestone, startDate: e.target.value })}
-            />
+            <input type="date" className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3" value={newMilestone.startDate} onChange={(e) => setNewMilestone({ ...newMilestone, startDate: e.target.value })} />
 
-            {/* End Date */}
             <label className="block text-sm text-gray-600 mb-1">End Date</label>
-            <input
-              type="date"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3"
-              value={newMilestone.endDate}
-              onChange={(e) => setNewMilestone({ ...newMilestone, endDate: e.target.value })}
-            />
+            <input type="date" className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3" value={newMilestone.endDate} onChange={(e) => setNewMilestone({ ...newMilestone, endDate: e.target.value })} />
 
-            {/* Buttons */}
             <div className="flex justify-end space-x-3 mt-4">
               <Button variant="outline" size="sm" onClick={() => setShowAddPopup(false)}>Cancel</Button>
               <Button variant="default" size="sm" onClick={handleAddMilestone}>Save</Button>
