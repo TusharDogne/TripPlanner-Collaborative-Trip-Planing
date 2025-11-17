@@ -102,4 +102,19 @@ public class MyTripService {
         return myTripsRepo.getMyTripsByIdIn(tripIds);
     }
 
+    public boolean deleteMyTrip(String tripId) {
+        MyTrips myTrip = myTripsRepo.findMyTripsById(tripId);
+        if (myTrip != null) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String currentUserName = auth.getName();
+            Users user = userRepo.findByUserName(currentUserName);
+
+            user.getMyTrips().remove(myTrip.getId());
+            myTripsRepo.delete(myTrip);
+            userRepo.save(user);
+            return true;
+        }
+
+        return false;
+    }
 }

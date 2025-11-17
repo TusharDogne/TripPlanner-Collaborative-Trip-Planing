@@ -20,6 +20,28 @@ const TripDashboard = () => {
   const [selectedTripId, setSelectedTripId] = useState(null);
   const [dashboardStats, setDashboardStats] = useState({});
 
+  // 🌟 NEW FUNCTION: Handles the deletion event triggered by TripCard
+  const handleTripDelete = (deletedTripId) => {
+    console.log(`🗑️ Dynamically removing trip ID: ${deletedTripId} from state.`);
+    
+    // 1. Update activeTrips: Filter out the trip with the matching ID
+    setActiveTrips(prevTrips => 
+      prevTrips.filter(trip => trip.id !== deletedTripId)
+    );
+
+    // 2. Update selectedTripId if the deleted trip was the currently selected one
+    setSelectedTripId(prevSelectedId => {
+      if (prevSelectedId === deletedTripId) {
+        // Automatically select a new trip (e.g., the first one remaining)
+        const remainingTrips = activeTrips.filter(trip => trip.id !== deletedTripId);
+        return remainingTrips.length > 0 ? remainingTrips[0].id : null;
+      }
+      return prevSelectedId;
+    });
+
+    // Note: Budget and Milestones would also need to be reset/updated based on the new selectedTripId
+  };
+
   useEffect(() => {
     const fetchTrips = async () => {
       try {
@@ -56,8 +78,9 @@ const TripDashboard = () => {
 
     fetchTrips();
 
-    // Mock activities
+    // Mock activities, notifications, and stats loading...
     const mockActivities = [
+      // ... (Mock activities content remains the same)
       {
         id: "act-1",
         type: "vote",
@@ -136,6 +159,7 @@ const TripDashboard = () => {
     ];
 
     const mockNotifications = [
+      // ... (Mock notifications content remains the same)
       {
         id: "notif-1",
         type: "vote",
@@ -295,12 +319,16 @@ const TripDashboard = () => {
                   {/* ✅ Trips shown in reverse order */}
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                     {activeTrips?.map((trip) => (
-                      <TripCard
-                        key={trip?.id}
-                        trip={trip}
-                        onViewDetails={handleTripViewDetails}
-                        onQuickAction={handleTripQuickAction}
-                      />
+                      // src/pages/trip-dashboard/index.jsx (around line 327)
+
+// 🌟 NEW PROP PASSED HERE 🌟
+<TripCard
+    key={trip?.id}
+    trip={trip}
+    onViewDetails={handleTripViewDetails}
+    onQuickAction={handleTripQuickAction}
+    onDelete={handleTripDelete}
+/>
                     ))}
                   </div>
                 </div>

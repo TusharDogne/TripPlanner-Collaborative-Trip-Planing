@@ -43,6 +43,15 @@ public class MyTripController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @DeleteMapping("/delete/{tripId}")
+    public ResponseEntity<?> deleteTrip(@PathVariable String tripId) {
+        boolean isDeleted = myTripService.deleteMyTrip(tripId);
+        if (isDeleted) {
+            return new ResponseEntity<>("Trip deleted successfully", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Trip deletion failed", HttpStatus.BAD_REQUEST);
+    }
+
 
 
     @GetMapping("/trips")
